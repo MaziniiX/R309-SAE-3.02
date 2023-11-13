@@ -35,7 +35,7 @@ if __name__ == "__main__":
     ser_sock.bind((HOST, PORT))
 
     # listen
-    ser_sock.listen(1)
+    ser_sock.listen(3)
     print('Chat server started on port : ' + str(PORT))
 
     thread_ac = threading.Thread(target = accept_client)
