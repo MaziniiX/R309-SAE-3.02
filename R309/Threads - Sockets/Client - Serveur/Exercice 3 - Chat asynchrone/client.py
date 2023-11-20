@@ -1,3 +1,19 @@
+"""
+Ce programme est un client TCP simple qui se connecte à un serveur sur l'adresse IP '127.0.0.1' et le port 12345. Il reçoit des messages du serveur et envoie des messages à celui-ci.
+
+Fonctions :
+- receive_messages(client_socket) : Cette fonction est exécutée dans un thread séparé et reçoit constamment des messages du serveur. Si le message reçu est 'arret' ou 'bye', la connexion du client est fermée.
+
+Variables :
+- host : L'adresse IP du serveur auquel le client se connecte.
+- port : Le port du serveur auquel le client se connecte.
+- flag : Un drapeau pour indiquer si le client doit se déconnecter ou non.
+- client_socket : Le socket client utilisé pour se connecter au serveur.
+- receive_thread : Le thread utilisé pour recevoir des messages du serveur.
+
+Le client envoie des messages au serveur jusqu'à ce que 'bye' ou 'arret' soit entré. Si 'bye' ou 'arret' est entré, le client se déconnecte.
+"""
+
 import socket
 import threading
 

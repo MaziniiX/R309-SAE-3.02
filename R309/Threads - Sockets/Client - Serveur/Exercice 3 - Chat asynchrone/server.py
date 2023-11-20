@@ -1,3 +1,24 @@
+"""
+Ce programme est un serveur de chat simple utilisant des sockets et du multithreading.
+
+Il écoute les connexions entrantes sur le port spécifié et crée un nouveau thread pour chaque client connecté.
+Chaque thread gère la réception des messages du client et envoie une réponse.
+
+Fonctions :
+- handle_client(conn, address) : Gère la connexion avec le client. Reçoit les messages du client et envoie une réponse. Si le message est 'bye', la connexion avec le client est fermée. Si le message est 'arret', le serveur est arrêté.
+- receive_messages(conn, address) : Reçoit les messages du client et les affiche.
+
+Variables :
+- host : L'adresse IP sur laquelle le serveur est hébergé.
+- port : Le port sur lequel le serveur écoute les connexions entrantes.
+- flag : Un drapeau pour indiquer si le serveur doit être arrêté.
+- server_socket : Le socket du serveur.
+- conn : Le socket du client.
+- address : L'adresse du client.
+- client_thread : Le thread pour gérer la connexion avec le client.
+- receive_thread : Le thread pour recevoir les messages du client.
+"""
+
 import socket
 import threading
 

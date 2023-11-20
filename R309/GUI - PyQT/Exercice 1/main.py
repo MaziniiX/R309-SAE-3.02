@@ -1,9 +1,45 @@
+"""
+Ce programme crée une interface graphique simple avec PyQt6. 
+
+Classes:
+    MainWindow: Une classe pour représenter la fenêtre principale de l'application.
+
+Méthodes:
+    __init__ : Initialise la fenêtre principale.
+    __actionOk : Affiche un message de bienvenue avec le nom saisi par l'utilisateur.
+    __actionQuitter : Ferme l'application.
+
+L'application demande à l'utilisateur de saisir son nom, puis affiche un message de bienvenue avec le nom saisi. L'utilisateur peut également quitter l'application en appuyant sur le bouton "Quitter".
+"""
+
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 
 class MainWindow(QMainWindow):
+    """
+    Une classe utilisée pour représenter la fenêtre principale de l'application
+
+    ...
+
+    Attributs
+    ----------
+    grid : QGridLayout
+        un layout pour organiser les widgets dans la fenêtre
+    text : QLineEdit
+        un champ de texte pour saisir le nom de l'utilisateur
+
+    Méthodes
+    -------
+    __actionOk():
+        Affiche un message de bienvenue avec le nom saisi par l'utilisateur.
+    __actionQuitter():
+        Ferme l'application.
+    """
     def __init__(self):
+        """
+        Initialise la fenêtre principale avec un QLabel, QLineEdit et deux QPushButton.
+        """
         super().__init__()
         widget = QWidget()
         self.setCentralWidget(widget)
@@ -24,9 +60,15 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Exercice 1")
     def __actionOk(self):
+        """
+        Affiche un QLabel avec un message de bienvenue contenant le nom saisi par l'utilisateur.
+        """
         hello = QLabel(f"Bonjour " + self.text.text())
         self.grid.addWidget(hello, 3, 0, 1, 2)
     def __actionQuitter(self):
+        """
+        Ferme l'application.
+        """
         QCoreApplication.exit(0)
 
 if __name__ == '__main__':

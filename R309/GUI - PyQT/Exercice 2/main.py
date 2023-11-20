@@ -1,3 +1,19 @@
+"""
+Ce programme est une application de conversion de température utilisant PyQt6. Il permet à l'utilisateur de convertir des températures entre les degrés Celsius (°C) et Kelvin (K).
+
+Classes :
+    MainWindow(QMainWindow) : Cette classe représente la fenêtre principale de l'application.
+
+Méthodes :
+    __init__() : Initialise la fenêtre principale.
+    update_units() : Met à jour les unités de température en fonction du type de conversion sélectionné.
+    perform_conversion() : Convertit la température en fonction du type de conversion sélectionné.
+    show_help() : Affiche un message d'aide.
+    show_error_message(message) : Affiche un message d'erreur.
+
+Si ce fichier est exécuté en tant que script principal, il crée une instance de QApplication, une instance de MainWindow, affiche la fenêtre principale et exécute l'application.
+"""
+
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
