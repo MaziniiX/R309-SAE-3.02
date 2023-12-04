@@ -1,7 +1,7 @@
 import socket
 import threading
 
-HOST = '127.0.0.1'
+HOST = '0.0.0.0'  # Bind to all available network interfaces
 PORT = 12345
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,7 +17,7 @@ print(f"Server listening on {HOST}:{PORT}")
 
 # List to keep track of connected client sockets
 connected_clients = []
-
+lock = threading.Lock()
 
 def handle_client(client_socket, addr):
     print(f"Accepted connection from {addr}")
@@ -28,7 +28,8 @@ def handle_client(client_socket, addr):
         send_message(client_socket, welcome_message)
 
         # Add the client socket to the list
-        connected_clients.append(client_socket)
+        with lock:
+            connected_clients.append(client_socket)
 
         # Receive and broadcast messages from the client
         while True:
@@ -46,12 +47,12 @@ def handle_client(client_socket, addr):
 
     finally:
         # Remove the client socket from the list
-        connected_clients.remove(client_socket)
+        with lock:
+            connected_clients.remove(client_socket)
 
         # Close the connection
         print(f"Connection from {addr} closed.")
         client_socket.close()
-
 
 def send_message(sock, message):
     message_bytes = message.encode('utf-8') if isinstance(message, str) else message
@@ -59,26 +60,25 @@ def send_message(sock, message):
     header = f"{message_length:<10}".encode()
     sock.send(header + message_bytes)
 
-
 def receive_message(sock):
     header = sock.recv(10)
     if not header:
         return None
 
     message_length = int(header.decode().strip())
-    data = sock.recv(message_length)
-    return data if data else None
+    return sock.recv(message_length)
 
 def broadcast_message(sender_socket, message):
-    for client_socket in connected_clients:
-        # Do not send the message back to the sender
-        if client_socket != sender_socket:
-            try:
-                send_message(client_socket, message)
-            except Exception as e:
-                print(f"Error broadcasting to a client: {e}")
+    with lock:
+        for client_socket in connected_clients:
+            # Do not send the message back to the sender
+            if client_socket != sender_socket:
+                try:
+                    send_message(client_socket, message)
+                except Exception as e:
+                    print(f"Error broadcasting to a client: {e}")
 
-
+# Accept and handle incoming connections
 while True:
     client_socket, addr = server_socket.accept()
     client_handler = threading.Thread(target=handle_client, args=(client_socket, addr))

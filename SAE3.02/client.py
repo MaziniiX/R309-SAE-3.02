@@ -1,4 +1,5 @@
 import socket
+import threading
 
 HOST = '127.0.0.1'
 PORT = 12345
@@ -11,12 +12,11 @@ except socket.error as e:
     print(f"Connection failed: {e}")
     exit()
 
-
 def send_message(sock, message):
-    message_length = len(message)
+    message_bytes = message.encode('utf-8') if isinstance(message, str) else message
+    message_length = len(message_bytes)
     header = f"{message_length:<10}".encode()
-    sock.send(header + message.encode())
-
+    sock.send(header + message_bytes)
 
 def receive_message(sock):
     header = sock.recv(10)
@@ -26,23 +26,26 @@ def receive_message(sock):
     message_length = int(header.decode().strip())
     return sock.recv(message_length)
 
-
-try:
-    # Receive and print the welcome message from the server
-    welcome_message = receive_message(client_socket)
-    print(f"Server: {welcome_message.decode()}")
-
+def listen_for_messages():
     while True:
-        # Send a message to the server
-        client_message = input("Enter your message (or 'exit' to quit): ")
-        if client_message.lower() == 'exit':
+        try:
+            message = receive_message(client_socket)
+            if message:
+                print(f"Received: {message.decode()}")
+        except Exception as e:
+            print(f"Error receiving message: {e}")
             break
 
-        send_message(client_socket, client_message)
+# Start a thread to listen for messages
+message_listener = threading.Thread(target=listen_for_messages)
+message_listener.start()
 
-except Exception as e:
-    print(f"Error during communication: {e}")
+# Send and receive messages
+while True:
+    user_input = input("Enter a message (or 'exit' to quit): ")
+    if user_input.lower() == 'exit':
+        break
+    send_message(client_socket, user_input)
 
-finally:
-    # Close the connection
-    client_socket.close()
+# Close the connection
+client_socket.close()
