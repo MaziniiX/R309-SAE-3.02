@@ -40,6 +40,13 @@ def listen_for_messages():
 message_listener = threading.Thread(target=listen_for_messages)
 message_listener.start()
 
+# User registration or login
+username = input("Enter your username: ")
+password = input("Enter your password: ")
+
+send_message(client_socket, username)
+send_message(client_socket, password)
+
 # Send and receive messages
 while True:
     user_input = input("Enter a message (or 'exit' to quit): ")
