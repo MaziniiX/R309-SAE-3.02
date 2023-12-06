@@ -31,7 +31,7 @@ def listen_for_messages():
         try:
             message = receive_message(client_socket)
             if message:
-                print(f"Received: {message.decode()}")
+                print(message.decode())
         except Exception as e:
             print(f"Error receiving message: {e}")
             break

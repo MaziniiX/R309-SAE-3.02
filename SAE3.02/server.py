@@ -39,7 +39,69 @@ if not cursor.fetchone():
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
             password_hash VARCHAR(100) NOT NULL,
+            is_admin BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    db.commit()
+
+# Check if messages table exists, if not, create it
+cursor.execute("SHOW TABLES LIKE 'messages'")
+if not cursor.fetchone():
+    cursor.execute("""
+        CREATE TABLE messages (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            sender_username VARCHAR(50) NOT NULL,
+            receiver_username VARCHAR(50) NOT NULL,
+            content TEXT NOT NULL,
+            sender_ip VARCHAR(15) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_username) REFERENCES users(username),
+            FOREIGN KEY (receiver_username) REFERENCES users(username)
+        )
+    """)
+    db.commit()
+
+# Check if kicks table exists, if not, create it
+cursor.execute("SHOW TABLES LIKE 'kicks'")
+if not cursor.fetchone():
+    cursor.execute("""
+        CREATE TABLE kicks (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            admin_username VARCHAR(50) NOT NULL,
+            target_username VARCHAR(50) NOT NULL,
+            duration VARCHAR(20) NOT NULL,
+            kicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (admin_username) REFERENCES users(username),
+            FOREIGN KEY (target_username) REFERENCES users(username)
+        )
+    """)
+    db.commit()
+
+# Check if bans table exists, if not, create it
+cursor.execute("SHOW TABLES LIKE 'bans'")
+if not cursor.fetchone():
+    cursor.execute("""
+        CREATE TABLE bans (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            admin_username VARCHAR(50) NOT NULL,
+            target_username VARCHAR(50) NOT NULL,
+            banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (admin_username) REFERENCES users(username),
+            FOREIGN KEY (target_username) REFERENCES users(username)
+        )
+    """)
+    db.commit()
+
+# Check if kills table exists, if not, create it
+cursor.execute("SHOW TABLES LIKE 'kills'")
+if not cursor.fetchone():
+    cursor.execute("""
+        CREATE TABLE kills (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            admin_username VARCHAR(50) NOT NULL,
+            killed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (admin_username) REFERENCES users(username)
         )
     """)
     db.commit()
@@ -58,9 +120,13 @@ def handle_client(client_socket, addr):
 
         if authenticate_user(username, password):
             print(f"Authentication successful for {username}")
+
+            # Check if the authenticated user is an admin
+            is_admin = check_admin(username)
+
             # Add the client socket to the list
             with lock:
-                connected_clients.append({"socket": client_socket, "username": username})
+                connected_clients.append({"socket": client_socket, "username": username, "is_admin": is_admin})
 
             # Receive and broadcast messages from the client
             while True:
@@ -70,8 +136,22 @@ def handle_client(client_socket, addr):
 
                 print(f"Received from {username}: {data.decode()}")
 
-                # Broadcast the message to all connected clients
-                broadcast_message(client_socket, data)
+                # Process admin commands
+                if is_admin and data.startswith("/"):
+                    process_admin_command(username, data)
+
+                else:
+                    # Store the message in the database
+                    store_message(username, "All", data.decode(), addr[0])
+
+                    # Check if it is a private message
+                    if data.startswith("/pm"):
+                        _, receiver, pm_content = data.split(" ", 2)
+                        send_private_message(username, receiver, pm_content)
+
+                    else:
+                        # Broadcast the message to all connected clients
+                        broadcast_message(client_socket, data)
 
         else:
             print(f"Authentication failed for {username}")
@@ -90,6 +170,53 @@ def handle_client(client_socket, addr):
         print(f"Connection from {addr} closed.")
         client_socket.close()
 
+def check_admin(username):
+    cursor.execute("SELECT is_admin FROM users WHERE username = %s", (username,))
+    result = cursor.fetchone()
+    return result and result[0] == 1
+
+def process_admin_command(admin_username, command):
+    # Process admin commands
+    if command.startswith("/kick"):
+        _, target_user, duration = command.split(" ", 2)
+        kick_user(admin_username, target_user, duration)
+
+    elif command.startswith("/ban"):
+        _, target_user, _ = command.split(" ", 2)
+        ban_user(admin_username, target_user)
+
+    elif command.startswith("/kill"):
+        kill_server(admin_username)
+
+def kick_user(admin_username, target_user, duration):
+    cursor.execute("""
+        INSERT INTO kicks (admin_username, target_username, duration)
+        VALUES (%s, %s, %s)
+    """, (admin_username, target_user, duration))
+    db.commit()
+
+    # Implement additional logic as needed
+    print(f"User {target_user} kicked for {duration} by admin {admin_username}")
+
+def ban_user(admin_username, target_user):
+    cursor.execute("""
+        INSERT INTO bans (admin_username, target_username)
+        VALUES (%s, %s)
+    """, (admin_username, target_user))
+    db.commit()
+
+    # Implement additional logic as needed
+    print(f"User {target_user} banned indefinitely by admin {admin_username}")
+
+def kill_server(admin_username):
+    cursor.execute("""
+        INSERT INTO kills (admin_username)
+        VALUES (%s)
+    """, (admin_username,))
+    db.commit()
+
+    # Implement additional logic as needed
+    print(f"Server killed by admin {admin_username}")
 def send_message(sock, message):
     message_bytes = message.encode('utf-8') if isinstance(message, str) else message
     message_length = len(message_bytes)
@@ -113,6 +240,26 @@ def broadcast_message(sender_socket, message):
                     send_message(client["socket"], message)
                 except Exception as e:
                     print(f"Error broadcasting to a client: {e}")
+
+def store_message(sender, receiver, content):
+    cursor.execute("""
+        INSERT INTO messages (sender_username, receiver_username, content)
+        VALUES (%s, %s, %s)
+    """, (sender, receiver, content))
+    db.commit()
+
+def send_private_message(sender, receiver, content):
+    receiver_socket = None
+    with lock:
+        for client in connected_clients:
+            if client["username"] == receiver:
+                receiver_socket = client["socket"]
+                break
+
+    if receiver_socket:
+        pm_message = f"DM from {sender}: {content}"
+        send_message(receiver_socket, pm_message)
+        store_message(sender, receiver, pm_message)
 
 def authenticate_user(username, password):
     cursor.execute("SELECT username, password_hash FROM users WHERE username = %s", (username,))
