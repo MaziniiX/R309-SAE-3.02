@@ -38,35 +38,6 @@ TABLES = {
             FOREIGN KEY (receiver_username) REFERENCES users(username)
         )
     """,
-    "kicks": """
-        CREATE TABLE IF NOT EXISTS kicks (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            admin_username VARCHAR(50) NOT NULL,
-            target_username VARCHAR(50) NOT NULL,
-            duration VARCHAR(20) NOT NULL,
-            kicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (admin_username) REFERENCES users(username),
-            FOREIGN KEY (target_username) REFERENCES users(username)
-        )
-    """,
-    "bans": """
-        CREATE TABLE IF NOT EXISTS bans (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            admin_username VARCHAR(50) NOT NULL,
-            target_username VARCHAR(50) NOT NULL,
-            banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (admin_username) REFERENCES users(username),
-            FOREIGN KEY (target_username) REFERENCES users(username)
-        )
-    """,
-    "kills": """
-        CREATE TABLE IF NOT EXISTS kills (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            admin_username VARCHAR(50) NOT NULL,
-            killed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (admin_username) REFERENCES users(username)
-        )
-    """,
 }
 
 # Database connection
@@ -134,9 +105,25 @@ def handle_client(client_socket, addr):
                     break
 
                 print(f"Received from {username}: {data.decode()}")
+                data=data.decode()
+                # Process private messages
+                if data.startswith("/pm"):
+                    _, receiver, pm_content = data.split(" ", 2)
+                    print("prout")
+                    send_private_message(username, receiver, pm_content)
+                    print("prout2")
+                    store_private_message(username, receiver, pm_content, addr[0])
+                    print("prout3")
 
-                # Broadcast the message to all connected clients
-                broadcast_message(username, data)
+                else:
+                    print("prout4")
+                    # Check if the message is a public message and not sent by the same user
+                    if not data.startswith("/"):
+                        # Store the message in the database (public message)
+                        store_message(username, data.decode(), addr[0])
+
+                        # Broadcast the message to all connected clients (excluding the sender)
+                        broadcast_message(username, data)
 
     except Exception as e:
         print(f"Error handling connection from {addr}: {e}")
@@ -279,12 +266,25 @@ def broadcast_message(sender_username, message):
             if username != sender_username:
                 event.set()
 
-def store_message(sender, receiver, content):
-    cursor.execute("""
-        INSERT INTO messages (sender_username, receiver_username, content)
-        VALUES (%s, %s, %s)
-    """, (sender, receiver, content))
+
+def store_message(sender, content, sender_ip, receiver_username=None):
+    if receiver_username:
+        # Private message
+        cursor.execute("""
+            INSERT INTO private_messages (sender_username, receiver_username, content, sender_ip)
+            VALUES (%s, %s, %s, %s)
+        """, (sender, receiver_username, content, sender_ip))
+    else:
+        # Public message
+        cursor.execute("""
+            INSERT INTO messages (sender_username, content, sender_ip)
+            VALUES (%s, %s, %s)
+        """, (sender, content, sender_ip))
+
     db.commit()
+
+def store_private_message(sender, receiver, content, sender_ip):
+    store_message(sender, content, sender_ip, receiver)
 
 def send_private_message(sender, receiver, content):
     receiver_socket = None
@@ -297,7 +297,6 @@ def send_private_message(sender, receiver, content):
     if receiver_socket:
         pm_message = f"DM from {sender}: {content}"
         send_message(receiver_socket, pm_message)
-        store_message(sender, receiver, pm_message)
 
 # Close the database connection when the server stops
 def close_database_connection():

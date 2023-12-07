@@ -6,8 +6,18 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create messages table
+-- Create public messages table
 CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_username VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    sender_ip VARCHAR(15) NOT NULL,
+    sended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_username) REFERENCES users(username)
+);
+
+-- Create private messages table
+CREATE TABLE private_messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_username VARCHAR(50) NOT NULL,
     receiver_username VARCHAR(50) NOT NULL,
