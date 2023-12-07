@@ -14,18 +14,12 @@ except socket.error as e:
 
 def send_message(sock, message):
     message_bytes = message.encode('utf-8') if isinstance(message, str) else message
-    message_length = len(message_bytes)
-    header = f"{message_length:<10}".encode()
-    sock.send(header + message_bytes)
+    sock.send(message_bytes)
 
 def receive_message(sock):
-    header = sock.recv(10)
-    if not header:
-        return None
+    return sock.recv(4096)  # Adjust the buffer size as needed
 
-    message_length = int(header.decode().strip())
-    return sock.recv(message_length)
-
+# Start a thread to listen for messages
 def listen_for_messages():
     while True:
         try:
@@ -36,16 +30,36 @@ def listen_for_messages():
             print(f"Error receiving message: {e}")
             break
 
+# User registration or login
+print(receive_message(client_socket).decode())  # Welcome message
+choice = input("Choose 'login' or 'signup': ").lower()
+send_message(client_socket, choice)
+
+if choice == 'login' or choice == 'signup':
+    # User Authentication or Registration
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+
+    send_message(client_socket, username)
+    send_message(client_socket, password)
+
+    # Receive response from the server
+    response = receive_message(client_socket).decode()
+
+    if response == "LOGIN_SUCCESS" or response == "SIGNUP_SUCCESS":
+        print("Authentication/Registration successful. You can now send messages.")
+    else:
+        print(f"Authentication/Registration failed: {response}")
+        client_socket.close()
+        exit()
+else:
+    print("Invalid choice. Exiting.")
+    client_socket.close()
+    exit()
+
 # Start a thread to listen for messages
 message_listener = threading.Thread(target=listen_for_messages)
 message_listener.start()
-
-# User registration or login
-username = input("Enter your username: ")
-password = input("Enter your password: ")
-
-send_message(client_socket, username)
-send_message(client_socket, password)
 
 # Send and receive messages
 while True:
