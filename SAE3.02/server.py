@@ -10,7 +10,7 @@ BUFFER_SIZE = 4096
 
 # Database configuration
 DB_CONFIG = {
-    "host": "127.0.0.1",
+    "host": "192.168.231.128",
     "user": "admin",
     "password": "toto",
     "database": "sae302",
@@ -30,6 +30,16 @@ TABLES = {
         CREATE TABLE IF NOT EXISTS messages (
             id INT AUTO_INCREMENT PRIMARY KEY,
             sender_username VARCHAR(50) NOT NULL,
+            content TEXT NOT NULL,
+            sender_ip VARCHAR(15) NOT NULL,
+            sended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_username) REFERENCES users(username)
+        )
+    """,
+    "private_messages": """
+        CREATE TABLE IF NOT EXISTS private_messages (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            sender_username VARCHAR(50) NOT NULL,
             receiver_username VARCHAR(50) NOT NULL,
             content TEXT NOT NULL,
             sender_ip VARCHAR(15) NOT NULL,
@@ -37,7 +47,7 @@ TABLES = {
             FOREIGN KEY (sender_username) REFERENCES users(username),
             FOREIGN KEY (receiver_username) REFERENCES users(username)
         )
-    """,
+    """
 }
 
 # Database connection
@@ -109,21 +119,18 @@ def handle_client(client_socket, addr):
                 # Process private messages
                 if data.startswith("/pm"):
                     _, receiver, pm_content = data.split(" ", 2)
-                    print("prout")
                     send_private_message(username, receiver, pm_content)
-                    print("prout2")
                     store_private_message(username, receiver, pm_content, addr[0])
-                    print("prout3")
 
                 else:
-                    print("prout4")
                     # Check if the message is a public message and not sent by the same user
                     if not data.startswith("/"):
-                        # Store the message in the database (public message)
-                        store_message(username, data.decode(), addr[0])
-
                         # Broadcast the message to all connected clients (excluding the sender)
                         broadcast_message(username, data)
+                        # Store the message in the database (public message)
+                        store_message(username, data, addr[0])
+
+
 
     except Exception as e:
         print(f"Error handling connection from {addr}: {e}")
@@ -267,24 +274,19 @@ def broadcast_message(sender_username, message):
                 event.set()
 
 
-def store_message(sender, content, sender_ip, receiver_username=None):
-    if receiver_username:
-        # Private message
-        cursor.execute("""
-            INSERT INTO private_messages (sender_username, receiver_username, content, sender_ip)
-            VALUES (%s, %s, %s, %s)
-        """, (sender, receiver_username, content, sender_ip))
-    else:
-        # Public message
-        cursor.execute("""
-            INSERT INTO messages (sender_username, content, sender_ip)
-            VALUES (%s, %s, %s)
-        """, (sender, content, sender_ip))
-
+def store_message(sender, content, sender_ip):
+    cursor.execute("""
+                INSERT INTO messages (sender_username, content, sender_ip)
+                VALUES (%s, %s, %s)
+            """, (sender, content, sender_ip))
     db.commit()
 
 def store_private_message(sender, receiver, content, sender_ip):
-    store_message(sender, content, sender_ip, receiver)
+    cursor.execute("""
+                INSERT INTO private_messages (sender_username, receiver_username, content, sender_ip)
+                VALUES (%s, %s, %s, %s)
+            """, (sender, receiver, content, sender_ip))
+    db.commit()
 
 def send_private_message(sender, receiver, content):
     receiver_socket = None
