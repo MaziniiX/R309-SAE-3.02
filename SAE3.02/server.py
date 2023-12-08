@@ -2,13 +2,13 @@ import socket
 import threading
 import bcrypt
 import mysql.connector
+from datetime import datetime, timedelta
+import time
 
-# Constants
 HOST = '0.0.0.0'
 PORT = 12345
 BUFFER_SIZE = 4096
 
-# Database configuration
 DB_CONFIG = {
     "host": "192.168.231.128",
     "user": "admin",
@@ -16,13 +16,13 @@ DB_CONFIG = {
     "database": "sae302",
 }
 
-# Database setup
 TABLES = {
     "users": """
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
             password_hash VARCHAR(100) NOT NULL,
+            ip_address VARCHAR(15),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """,
@@ -47,19 +47,33 @@ TABLES = {
             FOREIGN KEY (sender_username) REFERENCES users(username),
             FOREIGN KEY (receiver_username) REFERENCES users(username)
         )
-    """
+    """,
+    "kicked_users": """
+           CREATE TABLE IF NOT EXISTS kicked_users (
+               username VARCHAR(50) NOT NULL,
+               ip_address VARCHAR(15) NOT NULL,
+               kicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+               release_time TIMESTAMP NOT NULL,
+               FOREIGN KEY (username) REFERENCES users(username)
+           )
+       """,
+    "banned_users": """
+           CREATE TABLE IF NOT EXISTS banned_users (
+               username VARCHAR(50) NOT NULL,
+               ip_address VARCHAR(15) NOT NULL,
+               banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+               FOREIGN KEY (username) REFERENCES users(username)
+           )
+       """
 }
 
-# Database connection
 db = mysql.connector.connect(**DB_CONFIG)
 cursor = db.cursor()
 
-# Create tables if not exists
 for table_name, table_query in TABLES.items():
     cursor.execute(table_query)
 db.commit()
 
-# Server setup
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
     server_socket.bind((HOST, PORT))
@@ -70,23 +84,19 @@ except socket.error as e:
 server_socket.listen(5)
 print(f"Server listening on {HOST}:{PORT}")
 
-# List to keep track of connected client sockets
 connected_clients = []
 client_events = {}
 lock = threading.Lock()
 
-# Admin command prefix
-ADMIN_COMMAND_PREFIX = "/"
+ADMIN_COMMAND_PREFIX = ""
 
 def handle_client(client_socket, addr):
     print(f"Accepted connection from {addr}")
 
     try:
-        # Send a welcome message to the client
         welcome_message = "Welcome to the server! Would you like to login or signup?"
         send_message(client_socket, welcome_message)
 
-        # Check if the client wants to log in or sign up
         action = receive_message(client_socket).decode()
 
         username = None
@@ -96,58 +106,47 @@ def handle_client(client_socket, addr):
         elif action == "signup":
             username = handle_signup(client_socket)
         else:
-            # Invalid action, close the connection or handle accordingly
             print("Invalid action. Closing connection.")
             client_socket.close()
             return
 
         if username:
-            # Create an event for the client
             client_event = threading.Event()
             with lock:
                 connected_clients.append({"socket": client_socket, "username": username, "event": client_event})
                 client_events[username] = client_event
 
-            # Continue with the rest of your logic for handling messages
             while True:
                 data = receive_message(client_socket)
                 if not data:
                     break
 
                 print(f"Received from {username}: {data.decode()}")
-                data=data.decode()
-                # Process private messages
+                data = data.decode()
+
                 if data.startswith("/pm"):
                     _, receiver, pm_content = data.split(" ", 2)
                     send_private_message(username, receiver, pm_content)
                     store_private_message(username, receiver, pm_content, addr[0])
-
                 else:
-                    # Check if the message is a public message and not sent by the same user
                     if not data.startswith("/"):
-                        # Broadcast the message to all connected clients (excluding the sender)
                         broadcast_message(username, data)
-                        # Store the message in the database (public message)
                         store_message(username, data, addr[0])
-
-
 
     except Exception as e:
         print(f"Error handling connection from {addr}: {e}")
 
     finally:
-        # Remove the client socket from the list
         with lock:
             connected_clients[:] = [c for c in connected_clients if c["socket"] != client_socket]
             if username in client_events:
                 del client_events[username]
 
-        # Close the connection
         print(f"Connection from {addr} closed.")
         client_socket.close()
 
-# Helper function to handle user login
 def handle_login(client_socket):
+    addr = client_socket.getpeername()
     # User Authentication
     username = receive_message(client_socket).decode()
     password = receive_message(client_socket).decode()
@@ -155,6 +154,7 @@ def handle_login(client_socket):
     if authenticate_user(username, password):
         print(f"Authentication successful for {username}")
         send_message(client_socket, "LOGIN_SUCCESS")
+        update_user_ip(username, addr[0])  # Update user's IP address
         return username
     else:
         print(f"Authentication failed for {username}")
@@ -169,13 +169,12 @@ def authenticate_user(username, password):
         return True
     return False
 
-# Helper function to handle user signup
-def handle_signup(client_socket):
+def handle_signup(client_socket, addr):
     # User registration
     username = receive_message(client_socket).decode()
     password = receive_message(client_socket).decode()
 
-    if register_user(username, password):
+    if register_user(username, password, addr[0]):  # Pass the IP address to the function
         print(f"Registration successful for {username}")
         send_message(client_socket, "SIGNUP_SUCCESS")
         return username
@@ -184,24 +183,21 @@ def handle_signup(client_socket):
         send_message(client_socket, "SIGNUP_FAILURE")
         return None
 
-# Helper function to register a new user
-def register_user(username, password):
+def register_user(username, password, ip_address):
     # Hash the password before storing it
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     try:
         cursor.execute("""
-            INSERT INTO users (username, password_hash)
-            VALUES (%s, %s)
-        """, (username, hashed_password))
+            INSERT INTO users (username, password_hash, ip_address)
+            VALUES (%s, %s, %s)
+        """, (username, hashed_password, ip_address))
         db.commit()
         return True
     except Exception as e:
         print(f"Error registering user: {e}")
         return False
 
-
-# Admin command handling in the server console
 def admin_console():
     while True:
         admin_input = input("Admin console: ")
@@ -209,47 +205,90 @@ def admin_console():
             process_admin_command(admin_input[len(ADMIN_COMMAND_PREFIX):])
 
 def process_admin_command(admin_command):
-    # Process admin commands here
     if admin_command.startswith("/kick"):
         _, target_user, duration = admin_command.split(" ", 2)
-        kick_user("Admin", target_user, duration)
+        kick_user(target_user, duration)
     elif admin_command.startswith("/ban"):
         _, target_user, _ = admin_command.split(" ", 2)
-        ban_user("Admin", target_user)
+        ban_user(target_user)
     elif admin_command.startswith("/kill"):
-        kill_server("Admin")
+        kill_server()
     else:
         print("Invalid admin command")
 
-def kick_user(admin_username, target_user, duration):
-    cursor.execute("""
-        INSERT INTO kicks (admin_username, target_username, duration)
-        VALUES (%s, %s, %s)
-    """, (admin_username, target_user, duration))
-    db.commit()
+def kick_user(target_user, duration):
+    user_ip = get_user_ip(target_user)
 
-    # Implement additional logic as needed
-    print(f"User {target_user} kicked for {duration} by admin {admin_username}")
+    if user_ip:
+        kick_duration = int(duration)
+        release_time = datetime.now() + timedelta(seconds=kick_duration)
 
-def ban_user(admin_username, target_user):
+        print(f"target_user: {target_user}, user_ip: {user_ip}, release_time: {release_time}")
+        cursor.execute("""
+            INSERT INTO kicked_users (username, ip_address, release_time)
+            VALUES (%s, %s, %s)
+        """, (target_user, str(user_ip), release_time))
+
+        db.commit()
+
+        print(f"User {target_user} kicked for {duration} seconds. They can rejoin after {release_time}")
+    else:
+        print(f"Error: User {target_user} not found.")
+
+def get_user_ip(username):
+    cursor.execute("SELECT ip_address FROM users WHERE username = %s", (username,))
+    ip_address = cursor.fetchone()
+    if ip_address:
+        return ip_address[0]
+    return None
+
+def update_user_ip(username, ip_address):
+    try:
+        cursor.execute("""
+            UPDATE users SET ip_address = %s WHERE username = %s
+        """, (ip_address, username))
+        db.commit()
+        print(f"User {username}'s IP address updated to {ip_address}")
+    except Exception as e:
+        print(f"Error updating user's IP address: {e}")
+
+def ban_user(target_user):
+    user_ip = get_user_ip(target_user)
+    user_socket = get_user_socket(target_user)
+
     cursor.execute("""
-        INSERT INTO bans (admin_username, target_username)
+        INSERT INTO banned_users (username, ip_address)
         VALUES (%s, %s)
-    """, (admin_username, target_user))
+    """, (target_user, user_ip))
     db.commit()
 
-    # Implement additional logic as needed
-    print(f"User {target_user} banned indefinitely by admin {admin_username}")
+    if user_socket:
+        try:
+            user_socket.close()
+        except Exception as e:
+            print(f"Error closing connection for banned user {target_user}: {e}")
 
-def kill_server(admin_username):
-    cursor.execute("""
-        INSERT INTO kills (admin_username)
-        VALUES (%s)
-    """, (admin_username,))
-    db.commit()
+    print(f"User {target_user} banned indefinitely")
 
-    # Implement additional logic as needed
-    print(f"Server killed by admin {admin_username}")
+def get_user_socket(username):
+    with lock:
+        for client in connected_clients:
+            if client["username"] == username:
+                return client["socket"]
+    return None
+
+def kill_server():
+    broadcast_message("Admin", "The server will shut down in 10 seconds. Save your work!")
+    print("Server will shut down in 10 seconds. Save your work!")
+
+    timer = threading.Timer(10, shutdown_server)
+    timer.start()
+
+def shutdown_server():
+    print("Server shut down.")
+    server_socket.close()
+    close_database_connection()
+    exit()
 
 def send_message(sock, message):
     message_bytes = message.encode('utf-8') if isinstance(message, str) else message
@@ -261,18 +300,15 @@ def receive_message(sock):
 def broadcast_message(sender_username, message):
     with lock:
         for client in connected_clients:
-            # Do not send the message back to the sender
             if client["username"] != sender_username:
                 try:
                     send_message(client["socket"], message)
                 except Exception as e:
                     print(f"Error broadcasting to a client: {e}")
 
-        # Set events for all clients except the sender
         for username, event in client_events.items():
             if username != sender_username:
                 event.set()
-
 
 def store_message(sender, content, sender_ip):
     cursor.execute("""
@@ -300,16 +336,13 @@ def send_private_message(sender, receiver, content):
         pm_message = f"DM from {sender}: {content}"
         send_message(receiver_socket, pm_message)
 
-# Close the database connection when the server stops
 def close_database_connection():
     cursor.close()
     db.close()
 
-# Start the admin console thread
 admin_console_thread = threading.Thread(target=admin_console)
 admin_console_thread.start()
 
-# Accept and handle incoming connections
 while True:
     client_socket, addr = server_socket.accept()
     client_handler = threading.Thread(target=handle_client, args=(client_socket, addr))

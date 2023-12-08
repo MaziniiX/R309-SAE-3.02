@@ -32,7 +32,7 @@ def listen_for_messages():
 
 # User registration or login
 print(receive_message(client_socket).decode())  # Welcome message
-choice = input("Choose 'login' or 'signup': ").lower()
+choice = "login" #input("Choose 'login' or 'signup': ").lower()
 send_message(client_socket, choice)
 
 if choice == 'login' or choice == 'signup':
