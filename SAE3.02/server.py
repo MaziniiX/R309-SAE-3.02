@@ -10,7 +10,7 @@ PORT = 12345
 BUFFER_SIZE = 4096
 
 DB_CONFIG = {
-    "host": "192.168.231.128",
+    "host": "127.0.0.1",
     "user": "admin",
     "password": "toto",
     "database": "sae302",
@@ -94,9 +94,11 @@ def handle_client(client_socket, addr):
     print(f"Accepted connection from {addr}")
 
     try:
+        # Send a welcome message to the client
         welcome_message = "Welcome to the server! Would you like to login or signup?"
         send_message(client_socket, welcome_message)
 
+        # Check if the client wants to log in or sign up
         action = receive_message(client_socket).decode()
 
         username = None
@@ -104,18 +106,33 @@ def handle_client(client_socket, addr):
         if action == "login":
             username = handle_login(client_socket)
         elif action == "signup":
-            username = handle_signup(client_socket)
+            username = handle_signup(client_socket, addr)
         else:
+            # Invalid action, close the connection or handle accordingly
             print("Invalid action. Closing connection.")
             client_socket.close()
             return
 
         if username:
+            # Check if the user is in the kicked or banned list
+            if is_user_kicked(username) or is_user_banned(username):
+                print(f"User {username} is kicked. Closing connection.")
+                send_message(client_socket, "You are currently kicked.")
+                client_socket.close()
+                return
+            elif is_user_banned(username):
+                print(f"User {username} is banned. Closing connection.")
+                send_message(client_socket, "You are currently banned.")
+                client_socket.close()
+                return
+
+            # Create an event for the client
             client_event = threading.Event()
             with lock:
                 connected_clients.append({"socket": client_socket, "username": username, "event": client_event})
                 client_events[username] = client_event
 
+            # Continue with the rest of your logic for handling messages
             while True:
                 data = receive_message(client_socket)
                 if not data:
@@ -123,27 +140,50 @@ def handle_client(client_socket, addr):
 
                 print(f"Received from {username}: {data.decode()}")
                 data = data.decode()
-
+                # Process private messages
                 if data.startswith("/pm"):
                     _, receiver, pm_content = data.split(" ", 2)
                     send_private_message(username, receiver, pm_content)
                     store_private_message(username, receiver, pm_content, addr[0])
+
                 else:
+                    # Check if the message is a public message and not sent by the same user
                     if not data.startswith("/"):
+                        # Broadcast the message to all connected clients (excluding the sender)
                         broadcast_message(username, data)
+                        # Store the message in the database (public message)
                         store_message(username, data, addr[0])
 
     except Exception as e:
         print(f"Error handling connection from {addr}: {e}")
 
     finally:
+        # Remove the client socket from the list
         with lock:
             connected_clients[:] = [c for c in connected_clients if c["socket"] != client_socket]
             if username in client_events:
                 del client_events[username]
 
+        # Close the connection
         print(f"Connection from {addr} closed.")
         client_socket.close()
+
+
+def is_user_kicked(username):
+    # Check if the user is in the kicked list
+    cursor.execute("""
+        SELECT username FROM kicked_users WHERE username = %s AND release_time > NOW()
+    """, (username,))
+    return cursor.fetchone() is not None
+
+
+def is_user_banned(username):
+    # Check if the user is in the banned list
+    cursor.execute("""
+        SELECT username FROM banned_users WHERE username = %s
+    """, (username,))
+    return cursor.fetchone() is not None
+
 
 def handle_login(client_socket):
     addr = client_socket.getpeername()
@@ -209,8 +249,11 @@ def process_admin_command(admin_command):
         _, target_user, duration = admin_command.split(" ", 2)
         kick_user(target_user, duration)
     elif admin_command.startswith("/ban"):
-        _, target_user, _ = admin_command.split(" ", 2)
+        _, target_user = admin_command.split(" ", 2)
         ban_user(target_user)
+    elif admin_command.startswith("/unban"):
+        _, target_user = admin_command.split(" ", 1)
+        unban_user(target_user)
     elif admin_command.startswith("/kill"):
         kill_server()
     else:
@@ -230,6 +273,11 @@ def kick_user(target_user, duration):
         """, (target_user, str(user_ip), release_time))
 
         db.commit()
+
+        message = f"You have been kicked from the server for {duration} seconds. You can rejoin after {release_time}"
+        send_private_message("Admin", target_user, message)
+
+        close_user_socket(target_user)
 
         print(f"User {target_user} kicked for {duration} seconds. They can rejoin after {release_time}")
     else:
@@ -262,13 +310,34 @@ def ban_user(target_user):
     """, (target_user, user_ip))
     db.commit()
 
+    message = "You have been banned from the server indefinitely."
+    send_private_message("Admin", target_user, message)
+
+    close_user_socket(target_user)
+
+    print(f"User {target_user} banned indefinitely")
+
+def unban_user(target_user):
+    # Remove the user's record from the banned_users table
+    cursor.execute("DELETE FROM banned_users WHERE username = %s", (target_user,))
+    db.commit()
+
+    # Send a message to inform about the unban
+    message = f"You have been unbanned. You can now reconnect to the server."
+    send_private_message("Admin", target_user, message)
+
+    # Implement additional logic as needed
+    print(f"User {target_user} unbanned")
+
+# Helper function to close a user's socket
+def close_user_socket(username):
+    user_socket = get_user_socket(username)
     if user_socket:
         try:
             user_socket.close()
         except Exception as e:
-            print(f"Error closing connection for banned user {target_user}: {e}")
+            print(f"Error closing connection for kicked/banned user {username}: {e}")
 
-    print(f"User {target_user} banned indefinitely")
 
 def get_user_socket(username):
     with lock:
