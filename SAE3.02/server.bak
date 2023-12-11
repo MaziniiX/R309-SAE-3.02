@@ -98,75 +98,76 @@ def handle_client(client_socket, addr):
         welcome_message = "Welcome to the server! Would you like to login or signup?"
         send_message(client_socket, welcome_message)
 
-        # Ask for login or signup
-        send_message(client_socket, b"login_signup")
-
-        # Wait for the client's choice
-        choice = receive_message(client_socket).decode()
+        # Check if the client wants to log in or sign up
+        action = receive_message(client_socket).decode()
 
         username = None
 
-        if choice == "login":
+        if action == "login":
             username = handle_login(client_socket)
-        elif choice == "signup":
+        elif action == "signup":
             username = handle_signup(client_socket, addr)
         else:
-            # Invalid choice, close the connection or handle accordingly
-            send_message(client_socket, b"Invalid choice. Closing connection.")
+            # Invalid action, close the connection or handle accordingly
+            print("Invalid action. Closing connection.")
             client_socket.close()
+            return
 
         if username:
-                # Check if the user is in the kicked or banned list
-                if is_user_kicked(username) or is_user_banned(username):
-                    print(f"User {username} is kicked. Closing connection.")
-                    send_message(client_socket, "You are currently kicked.")
-                    client_socket.close()
-                    return
-                elif is_user_banned(username):
-                    print(f"User {username} is banned. Closing connection.")
-                    send_message(client_socket, "You are currently banned.")
-                    client_socket.close()
-                    return
+            # Check if the user is in the kicked or banned list
+            if is_user_kicked(username) or is_user_banned(username):
+                print(f"User {username} is kicked. Closing connection.")
+                send_message(client_socket, "You are currently kicked.")
+                client_socket.close()
+                return
+            elif is_user_banned(username):
+                print(f"User {username} is banned. Closing connection.")
+                send_message(client_socket, "You are currently banned.")
+                client_socket.close()
+                return
 
-                # Create an event for the client
-                client_event = threading.Event()
-                with lock:
-                    connected_clients.append({"socket": client_socket, "username": username, "event": client_event})
-                    client_events[username] = client_event
+            # Create an event for the client
+            client_event = threading.Event()
+            with lock:
+                connected_clients.append({"socket": client_socket, "username": username, "event": client_event})
+                client_events[username] = client_event
 
-                # Continue with the rest of your logic for handling messages
-                while True:
-                    data = receive_message(client_socket)
-                    if not data:
-                        break
+            # Continue with the rest of your logic for handling messages
+            while True:
+                data = receive_message(client_socket)
+                if not data:
+                    break
 
-                    print(f"Received from {username}: {data.decode()}")
-                    data = data.decode()
-                    # Process private messages
-                    if data.startswith("/pm"):
-                        _, receiver, pm_content = data.split(" ", 2)
-                        send_private_message(username, receiver, pm_content)
-                        store_private_message(username, receiver, pm_content, addr[0])
+                print(f"Received from {username}: {data.decode()}")
+                data = data.decode()
+                # Process private messages
+                if data.startswith("/pm"):
+                    _, receiver, pm_content = data.split(" ", 2)
+                    send_private_message(username, receiver, pm_content)
+                    store_private_message(username, receiver, pm_content, addr[0])
 
-                    else:
-                        # Check if the message is a public message and not sent by the same user
-                        if not data.startswith("/"):
-                            # Broadcast the message to all connected clients (excluding the sender)
-                            broadcast_message(username, data)
-                            # Store the message in the database (public message)
-                            store_message(username, data, addr[0])
+                else:
+                    # Check if the message is a public message and not sent by the same user
+                    if not data.startswith("/"):
+                        # Broadcast the message to all connected clients (excluding the sender)
+                        broadcast_message(username, data)
+                        # Store the message in the database (public message)
+                        store_message(username, data, addr[0])
 
     except Exception as e:
         print(f"Error handling connection from {addr}: {e}")
+
     finally:
         # Remove the client socket from the list
         with lock:
             connected_clients[:] = [c for c in connected_clients if c["socket"] != client_socket]
             if username in client_events:
                 del client_events[username]
+
         # Close the connection
         print(f"Connection from {addr} closed.")
         client_socket.close()
+
 
 def is_user_kicked(username):
     # Check if the user is in the kicked list
@@ -192,12 +193,12 @@ def handle_login(client_socket):
 
     if authenticate_user(username, password):
         print(f"Authentication successful for {username}")
-        send_message(client_socket, b"LOGIN_SUCCESS")
+        send_message(client_socket, "LOGIN_SUCCESS")
         update_user_ip(username, addr[0])  # Update user's IP address
         return username
     else:
         print(f"Authentication failed for {username}")
-        send_message(client_socket, b"LOGIN_FAILURE")
+        send_message(client_socket, "LOGIN_FAILURE")
         return None
 
 def authenticate_user(username, password):
@@ -215,11 +216,11 @@ def handle_signup(client_socket, addr):
 
     if register_user(username, password, addr[0]):  # Pass the IP address to the function
         print(f"Registration successful for {username}")
-        send_message(client_socket, b"SIGNUP_SUCCESS")
+        send_message(client_socket, "SIGNUP_SUCCESS")
         return username
     else:
         print(f"Registration failed for {username}")
-        send_message(client_socket, b"SIGNUP_FAILURE")
+        send_message(client_socket, "SIGNUP_FAILURE")
         return None
 
 def register_user(username, password, ip_address):
