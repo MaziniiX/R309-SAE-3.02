@@ -1,10 +1,136 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox
-from PyQt6.QtCore import Qt
+
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QTextEdit, QPushButton, \
+    QHBoxLayout, QListWidget, QStackedWidget, QTextBrowser, QLabel, QLineEdit, QMessageBox
 import socket
 import threading
 
-class ChatClient(QMainWindow):
+class ChatWidget(QWidget):
+    message_received = pyqtSignal(str)
+    message_sent = pyqtSignal(str)
+
+    def __init__(self, username, users_list_widget, messages_widget, private_messages_widget):
+        super().__init__()
+
+        self.username = username
+        self.users_list_widget = users_list_widget
+        self.messages_widget = messages_widget
+        self.private_messages_widget = private_messages_widget
+
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        self.message_area = QTextBrowser()
+        self.message_area.setReadOnly(True)
+
+        self.input_area = QTextEdit()
+        self.input_area.setPlaceholderText("Type your message here...")
+        self.input_area.setMaximumHeight(100)
+
+        send_button = QPushButton("Send")
+        send_button.clicked.connect(self.send_message)
+
+        layout.addWidget(self.message_area)
+        layout.addWidget(self.input_area)
+        layout.addWidget(send_button)
+
+        self.setLayout(layout)
+
+    def send_message(self):
+        message = self.input_area.toPlainText().strip()
+        if message:
+            self.message_sent.emit(message)
+            self.input_area.clear()
+
+    def display_message(self, sender, content):
+        self.message_area.append(f"{sender}: {content}")
+
+    def display_private_message(self, sender, content):
+        self.private_messages_widget.append(f"{sender}: {content}")
+
+class PrivateChatWindow(QWidget):
+    def __init__(self, username, target_user):
+        super().__init__()
+
+        self.username = username
+        self.target_user = target_user
+
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        self.private_messages_widget = QTextBrowser()
+        self.private_messages_widget.setReadOnly(True)
+
+        self.input_area = QTextEdit()
+        self.input_area.setPlaceholderText("Type your message here...")
+        self.input_area.setMaximumHeight(100)
+
+        send_button = QPushButton("Send")
+        send_button.clicked.connect(self.send_private_message)
+
+        layout.addWidget(self.private_messages_widget)
+        layout.addWidget(self.input_area)
+        layout.addWidget(send_button)
+
+        self.setLayout(layout)
+
+    def send_private_message(self):
+        message = self.input_area.toPlainText().strip()
+        if message:
+            # Here you can send the private message to the server
+            # For now, let's print it to the console
+            print(f"Private message sent to {self.target_user}: {message}")
+
+            # Display the private message in the window
+            self.private_messages_widget.append(f"{self.username}: {message}")
+
+class ChatApp(QMainWindow):
+    def __init__(self, username):
+        super().__init__()
+
+        self.username = username
+        self.chat_client = login_signup_page  # Store reference to ChatClient instance
+        self.init_ui()
+
+    def init_ui(self):
+        central_widget = QWidget()
+        layout = QHBoxLayout()
+
+        # Left Panel - Users Sidebar
+        users_list_widget = QListWidget()
+        users_list_widget.addItems(["User1", "User2", "User3"])  # Replace with actual users
+        users_list_widget.clicked.connect(self.open_private_chat)
+
+        # Center Panel - Stacked Widget for Public and Private Chats
+        stacked_widget = QStackedWidget()
+
+        public_chat_widget = ChatWidget(self.username, users_list_widget, QTextBrowser(), None)
+        private_chat_widget = PrivateChatWindow(self.username, "TargetUser")  # Replace with the actual target user
+
+        stacked_widget.addWidget(public_chat_widget)
+        stacked_widget.addWidget(private_chat_widget)
+
+        layout.addWidget(users_list_widget)
+        layout.addWidget(stacked_widget)
+
+        central_widget.setLayout(layout)
+
+        self.setCentralWidget(central_widget)
+        self.setWindowTitle(f"Chat App - {self.username}")
+
+    def open_private_chat(self, item):
+        target_user = item.text()
+        print(f"Opening private chat with {target_user}")
+
+        # Set the index of the Private Chat widget in the stacked widget
+        self.centralWidget().layout().itemAt(1).widget().setCurrentIndex(1)
+
+class LoginSignupPage(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -44,6 +170,9 @@ class ChatClient(QMainWindow):
         self.layout.addWidget(self.button_signup)
 
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.edit_host.setText("127.0.0.1")
+        self.edit_port.setText("12345")
+        self.username = ""
 
         # Connect signals to slots
         self.button_login.clicked.connect(self.login_clicked)
@@ -77,13 +206,19 @@ class ChatClient(QMainWindow):
 
             # Wait for server response
             login_response = self.receive_message()
+            print(login_response)
 
         elif response != b"login_signup":
             QMessageBox.critical(self, 'Unexpected Server Response', 'Expected login_signup from server.')
             return
 
         if login_response == b"LOGIN_SUCCESS":
+            # Capture and store the username
+            self.username = username
             self.open_success_window('Login Successful')
+            # Create and show the ChatApp window
+            self.chat_app = ChatApp(self.username)
+            self.chat_app.show()
         else:
             self.open_error_window('Login Failed', 'Invalid username or password.')
 
@@ -118,11 +253,22 @@ class ChatClient(QMainWindow):
 
         # Wait for server response
         signup_response = self.receive_message()
+        print(signup_response)
 
         if signup_response == b"SIGNUP_SUCCESS":
+            # Capture and store the username
+            self.username = username
             self.open_success_window('Signup Successful')
+            # Create and show the ChatApp window
+            self.chat_app = ChatApp(self.username)
+            self.chat_app.show()
         else:
             self.open_error_window('Signup Failed', 'Username is already taken.')
+
+    def open_chat_app(self, username):
+        chat_app = ChatApp(username)
+        chat_app.show()
+        self.hide()
 
     def open_success_window(self, message):
         QMessageBox.information(self, 'Success', message)
@@ -139,6 +285,10 @@ class ChatClient(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    client = ChatClient()
-    client.show()
+
+    # Example usage: replace 'JohnDoe' with the actual username
+    login_signup_page = LoginSignupPage()
+    chat_app = ChatApp(login_signup_page)  # Pass ChatClient instance to ChatApp
+    login_signup_page.show()
+
     sys.exit(app.exec())

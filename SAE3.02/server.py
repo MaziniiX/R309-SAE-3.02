@@ -95,11 +95,8 @@ def handle_client(client_socket, addr):
 
     try:
         # Send a welcome message to the client
-        welcome_message = "Welcome to the server! Would you like to login or signup?"
+        welcome_message = "login_signup"
         send_message(client_socket, welcome_message)
-
-        # Ask for login or signup
-        send_message(client_socket, b"login_signup")
 
         # Wait for the client's choice
         choice = receive_message(client_socket).decode()
@@ -109,10 +106,10 @@ def handle_client(client_socket, addr):
         if choice == "login":
             username = handle_login(client_socket)
         elif choice == "signup":
-            username = handle_signup(client_socket, addr)
+            username = handle_signup(client_socket)
         else:
             # Invalid choice, close the connection or handle accordingly
-            send_message(client_socket, b"Invalid choice. Closing connection.")
+            send_message(client_socket, "Invalid choice. Closing connection.")
             client_socket.close()
 
         if username:
@@ -162,7 +159,7 @@ def handle_client(client_socket, addr):
         # Remove the client socket from the list
         with lock:
             connected_clients[:] = [c for c in connected_clients if c["socket"] != client_socket]
-            if username in client_events:
+            if username and username in client_events:
                 del client_events[username]
         # Close the connection
         print(f"Connection from {addr} closed.")
@@ -208,7 +205,8 @@ def authenticate_user(username, password):
         return True
     return False
 
-def handle_signup(client_socket, addr):
+def handle_signup(client_socket):
+    addr = client_socket.getpeername()
     # User registration
     username = receive_message(client_socket).decode()
     password = receive_message(client_socket).decode()
