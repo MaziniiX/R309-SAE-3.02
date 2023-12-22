@@ -1,0 +1,672 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="" lang="" version="-//W3C//DTD XHTML 1.1//EN" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="">
+    <link rel="icon" type="image/x-icon" href="">
+
+  
+  <title>source.guiclient &mdash; SAE 3.02 1.0.0 documentation</title>
+  
+
+  
+
+  
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'/>
+
+
+  <link rel="stylesheet" href="../../_static/css/img.css" type="text/css"/>
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pdj.css" type="text/css" />
+  
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/darker.css" type="text/css" media="(prefers-color-scheme: dark)"/>
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="SAE 3.02 1.0.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="cache-control" content="public" />
+    <meta name="robots" content="follow, all" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Add jQuery library -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <script type="module" src="https://googlechromelabs.github.io/dark-mode-toggle/src/dark-mode-toggle.mjs"></script>
+
+  </head>
+
+  <body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+	
+        <a href="../../index.html" class="fa fa-home"> SAE 3.02 </a>
+	
+	
+        <div role="search">
+	  
+	  <form id ="rtd-search-form" class="wy-form"
+		action="../../search.html" method="get">
+	    <input type="text" name="q" placeholder="Search docs" />
+	    <input type="hidden" name="check_keywords" value="yes" />
+	    <input type="hidden" name="area" value="default" />
+	  </form>
+	  
+	</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	
+          
+          
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">SAE3.02</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../source.html">source package</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+
+      </div>
+      &nbsp;
+    </nav>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      <nav class="wy-nav-top" id="barra-mobile" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">SAE 3.02 </a>
+      </nav>
+
+      <div class="wy-nav-content">
+	<div class="fundo-claro">
+	</div>
+	<div class="fundo-escuro">
+	</div>
+
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+	    
+	    <!-- <ul class="wy-breadcrumbs"> -->
+	    <!--   <li><a href="#">Docs</a> &raquo;</li> -->
+
+	    <!--   <li>Features</li> -->
+	    <!--   <li class="wy-breadcrumbs-aside"> -->
+
+	    <!-- 	<a href="_sources/index.txt" rel="nofollow"> View page source</a> -->
+
+	    <!--   </li> -->
+	    <!-- </ul> -->
+	    <!-- <hr/> -->
+	  </div>
+          <div role="main" class="">
+
+	    <div id="content" class="hfeed entry-container hentry">
+      	<div id="dark-mode-toggle-container">
+	  <dark-mode-toggle appearance="toggle" dark="switch to light mode" light="switch to dark mode">
+	  </dark-mode-toggle>
+	</div>
+  <h1>Source code for source.guiclient</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">from</span> <span class="nn">PyQt6.QtCore</span> <span class="kn">import</span> <span class="n">pyqtSignal</span>
+<span class="kn">from</span> <span class="nn">PyQt6.QtWidgets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">QApplication</span><span class="p">,</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QTextEdit</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span>
+    <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QListWidget</span><span class="p">,</span> <span class="n">QStackedWidget</span><span class="p">,</span> <span class="n">QTextBrowser</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QMessageBox</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="ChatWidget">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatWidget">[docs]</a>
+<span class="k">class</span> <span class="nc">ChatWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widget for displaying and interacting with the public chat.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    - `message_received`: Signal emitted when a message is received.</span>
+<span class="sd">    - `message_sent`: Signal emitted when a message is sent.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - `__init__(self, username, users_list_widget, messages_widget, private_messages_widget)`: Initializes the ChatWidget.</span>
+<span class="sd">    - `init_ui(self)`: Initializes the user interface.</span>
+<span class="sd">    - `send_message(self)`: Sends a public message.</span>
+<span class="sd">    - `display_message(self, sender, content)`: Displays a public message.</span>
+<span class="sd">    - `display_private_message(self, sender, content)`: Displays a private message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">message_received</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">message_sent</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">users_list_widget</span><span class="p">,</span> <span class="n">messages_widget</span><span class="p">,</span> <span class="n">private_messages_widget</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">users_list_widget</span> <span class="o">=</span> <span class="n">users_list_widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages_widget</span> <span class="o">=</span> <span class="n">messages_widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">private_messages_widget</span> <span class="o">=</span> <span class="n">private_messages_widget</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_ui</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ChatWidget.init_ui">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatWidget.init_ui">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the user interface of the ChatWidget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_area</span> <span class="o">=</span> <span class="n">QTextBrowser</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_area</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span> <span class="o">=</span> <span class="n">QTextEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Type your message here...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="n">send_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Send&quot;</span><span class="p">)</span>
+        <span class="n">send_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">)</span>
+
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message_area</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">send_button</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatWidget.send_message">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatWidget.send_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a public message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message_sent</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ChatWidget.display_message">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatWidget.display_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">display_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays a public message.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `sender`: The sender of the message.</span>
+<span class="sd">        - `content`: The content of the message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_area</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sender</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatWidget.display_private_message">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatWidget.display_private_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">display_private_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays a private message.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `sender`: The sender of the private message.</span>
+<span class="sd">        - `content`: The content of the private message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">private_messages_widget</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sender</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="PrivateChatWindow">
+<a class="viewcode-back" href="../../source.html#source.guiclient.PrivateChatWindow">[docs]</a>
+<span class="k">class</span> <span class="nc">PrivateChatWindow</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widget for displaying and interacting with private messages.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - `__init__(self, username, target_user)`: Initializes the PrivateChatWindow.</span>
+<span class="sd">    - `init_ui(self)`: Initializes the user interface.</span>
+<span class="sd">    - `send_private_message(self)`: Sends a private message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">target_user</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_user</span> <span class="o">=</span> <span class="n">target_user</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_ui</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PrivateChatWindow.init_ui">
+<a class="viewcode-back" href="../../source.html#source.guiclient.PrivateChatWindow.init_ui">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the user interface of the PrivateChatWindow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">private_messages_widget</span> <span class="o">=</span> <span class="n">QTextBrowser</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">private_messages_widget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span> <span class="o">=</span> <span class="n">QTextEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Type your message here...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="n">send_button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Send&quot;</span><span class="p">)</span>
+        <span class="n">send_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">send_private_message</span><span class="p">)</span>
+
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">private_messages_widget</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">send_button</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PrivateChatWindow.send_private_message">
+<a class="viewcode-back" href="../../source.html#source.guiclient.PrivateChatWindow.send_private_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">send_private_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a private message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_area</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Private message sent to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_user</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">private_messages_widget</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ChatApp">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatApp">[docs]</a>
+<span class="k">class</span> <span class="nc">ChatApp</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main application window for the chat application.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - `__init__(self, username, chat_client)`: Initializes the ChatApp.</span>
+<span class="sd">    - `init_ui(self)`: Initializes the user interface.</span>
+<span class="sd">    - `open_private_chat(self, item)`: Opens a private chat window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">chat_client</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_client</span> <span class="o">=</span> <span class="n">chat_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_ui</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ChatApp.init_ui">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatApp.init_ui">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the user interface of the ChatApp.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">central_widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        <span class="n">users_list_widget</span> <span class="o">=</span> <span class="n">QListWidget</span><span class="p">()</span>
+        <span class="n">users_list_widget</span><span class="o">.</span><span class="n">addItems</span><span class="p">([</span><span class="s2">&quot;User1&quot;</span><span class="p">,</span> <span class="s2">&quot;User2&quot;</span><span class="p">,</span> <span class="s2">&quot;User3&quot;</span><span class="p">])</span>
+        <span class="n">users_list_widget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_private_chat</span><span class="p">)</span>
+
+        <span class="n">stacked_widget</span> <span class="o">=</span> <span class="n">QStackedWidget</span><span class="p">()</span>
+
+        <span class="n">public_chat_widget</span> <span class="o">=</span> <span class="n">ChatWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">users_list_widget</span><span class="p">,</span> <span class="n">QTextBrowser</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">private_chat_widget</span> <span class="o">=</span> <span class="n">PrivateChatWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="s2">&quot;TargetUser&quot;</span><span class="p">)</span>
+
+        <span class="n">stacked_widget</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">public_chat_widget</span><span class="p">)</span>
+        <span class="n">stacked_widget</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">private_chat_widget</span><span class="p">)</span>
+
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">users_list_widget</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">stacked_widget</span><span class="p">)</span>
+
+        <span class="n">central_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">central_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chat App - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatApp.open_private_chat">
+<a class="viewcode-back" href="../../source.html#source.guiclient.ChatApp.open_private_chat">[docs]</a>
+    <span class="k">def</span> <span class="nf">open_private_chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens a private chat window.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `item`: The item clicked in the user list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">target_user</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Opening private chat with </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">()</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">itemAt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="LoginSignupPage">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage">[docs]</a>
+<span class="k">class</span> <span class="nc">LoginSignupPage</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Login and signup page for the chat client.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">    - `__init__(self)`: Initializes the LoginSignupPage.</span>
+<span class="sd">    - `login_clicked(self)`: Handles the login button click event.</span>
+<span class="sd">    - `signup_clicked(self)`: Handles the signup button click event.</span>
+<span class="sd">    - `get_input_values(self)`: Retrieves input values from the UI.</span>
+<span class="sd">    - `send_login_request(self, username, password)`: Sends a login request to the server.</span>
+<span class="sd">    - `send_signup_request(self, username, password)`: Sends a signup request to the server.</span>
+<span class="sd">    - `open_chat_app(self)`: Opens the main chat application window.</span>
+<span class="sd">    - `show_connection_error(self, error)`: Displays a connection error message.</span>
+<span class="sd">    - `show_unexpected_response_error(self)`: Displays an unexpected server response error message.</span>
+<span class="sd">    - `open_success_window(self, message)`: Displays a success message.</span>
+<span class="sd">    - `open_error_window(self, title, message)`: Displays an error message.</span>
+<span class="sd">    - `send_message(self, message)`: Sends a message to the server.</span>
+<span class="sd">    - `receive_message(self)`: Receives a message from the server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Chat Client&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">central_widget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_host</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Host:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_host</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_host</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_host</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_port</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Port:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_port</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_port</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_username</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Username:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_username</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_username</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_username</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_password</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Password:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_password</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_password</span><span class="o">.</span><span class="n">setEchoMode</span><span class="p">(</span><span class="n">QLineEdit</span><span class="o">.</span><span class="n">EchoMode</span><span class="o">.</span><span class="n">Password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_password</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_login</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Login&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_signup</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Signup&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_login</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">button_signup</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_host</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edit_port</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;12345&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_login</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login_clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_signup</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signup_clicked</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LoginSignupPage.login_clicked">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.login_clicked">[docs]</a>
+    <span class="k">def</span> <span class="nf">login_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the login button click event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_input_values</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client_socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_connection_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">response</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;login_signup&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_login_request</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">login_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">login_response</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">login_response</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;LOGIN_SUCCESS&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_success_window</span><span class="p">(</span><span class="s1">&#39;Login Successful&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_chat_app</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_error_window</span><span class="p">(</span><span class="s1">&#39;Login Failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Invalid username or password.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_unexpected_response_error</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.signup_clicked">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.signup_clicked">[docs]</a>
+    <span class="k">def</span> <span class="nf">signup_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the signup button click event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_input_values</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client_socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_connection_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">response</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;login_signup&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_signup_request</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">signup_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">signup_response</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">signup_response</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;SIGNUP_SUCCESS&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_success_window</span><span class="p">(</span><span class="s1">&#39;Signup Successful&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_chat_app</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open_error_window</span><span class="p">(</span><span class="s1">&#39;Signup Failed&#39;</span><span class="p">,</span> <span class="s1">&#39;Username is already taken.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_unexpected_response_error</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.get_input_values">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.get_input_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_input_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves input values from the UI.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - Tuple containing host, port, username, and password.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">host</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edit_host</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edit_port</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edit_username</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edit_password</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.send_login_request">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.send_login_request">[docs]</a>
+    <span class="k">def</span> <span class="nf">send_login_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a login request to the server.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `username`: The username for login.</span>
+<span class="sd">        - `password`: The password for login.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;login&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.send_signup_request">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.send_signup_request">[docs]</a>
+    <span class="k">def</span> <span class="nf">send_signup_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a signup request to the server.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `username`: The username for signup.</span>
+<span class="sd">        - `password`: The password for signup.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;signup&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.open_chat_app">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.open_chat_app">[docs]</a>
+    <span class="k">def</span> <span class="nf">open_chat_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens the main chat application window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_app</span> <span class="o">=</span> <span class="n">ChatApp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_app</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.show_connection_error">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.show_connection_error">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_connection_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays a connection error message.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `error`: The error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Connection Error&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Failed to connect to the server: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.show_unexpected_response_error">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.show_unexpected_response_error">[docs]</a>
+    <span class="k">def</span> <span class="nf">show_unexpected_response_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays an unexpected server response error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Unexpected Server Response&#39;</span><span class="p">,</span> <span class="s1">&#39;Expected login_signup from server.&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.open_success_window">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.open_success_window">[docs]</a>
+    <span class="k">def</span> <span class="nf">open_success_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays a success message.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `message`: The success message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Success&#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.open_error_window">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.open_error_window">[docs]</a>
+    <span class="k">def</span> <span class="nf">open_error_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays an error message.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `title`: The title of the error window.</span>
+<span class="sd">        - `message`: The error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.send_message">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.send_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a message to the server.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - `message`: The message to be sent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message_bytes</span> <span class="o">=</span> <span class="n">message</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">message_bytes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LoginSignupPage.receive_message">
+<a class="viewcode-back" href="../../source.html#source.guiclient.LoginSignupPage.receive_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">receive_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receives a message from the server.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - The received message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span></div>
+</div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+
+    <span class="n">login_signup_page</span> <span class="o">=</span> <span class="n">LoginSignupPage</span><span class="p">()</span>
+    <span class="n">login_signup_page</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">())</span>
+</pre></div>
+
+	    </div>
+            <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2023, Justin Chaleard.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/jucacrispim/sphinx_pdj_theme">theme</a> provided by <a href="https://poraodojuca.dev">Porão do Juca</a>.
+
+</footer>
+	</div>
+	</div>
+	  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js">
+
+    </script>
+    <script type="text/javascript" src="../../_static/doctools.js">
+
+    </script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js">
+
+    </script>
+
+  
+
+   <script type="text/javascript"
+           src="../../_static/js/theme.js"></script>
+
+   <script type="text/javascript"
+           src="../../_static/js/pdj.js"></script>
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+  </body>
+</html>

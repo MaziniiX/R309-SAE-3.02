@@ -1,0 +1,908 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="" lang="" version="-//W3C//DTD XHTML 1.1//EN" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="">
+    <link rel="icon" type="image/x-icon" href="">
+
+  
+  <title>source.server &mdash; SAE 3.02 1.0.0 documentation</title>
+  
+
+  
+
+  
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'/>
+
+
+  <link rel="stylesheet" href="../../_static/css/img.css" type="text/css"/>
+  
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/css/pdj.css" type="text/css" />
+  
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/darker.css" type="text/css" media="(prefers-color-scheme: dark)"/>
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="SAE 3.02 1.0.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="cache-control" content="public" />
+    <meta name="robots" content="follow, all" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Add jQuery library -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <script type="module" src="https://googlechromelabs.github.io/dark-mode-toggle/src/dark-mode-toggle.mjs"></script>
+
+  </head>
+
+  <body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+	
+        <a href="../../index.html" class="fa fa-home"> SAE 3.02 </a>
+	
+	
+        <div role="search">
+	  
+	  <form id ="rtd-search-form" class="wy-form"
+		action="../../search.html" method="get">
+	    <input type="text" name="q" placeholder="Search docs" />
+	    <input type="hidden" name="check_keywords" value="yes" />
+	    <input type="hidden" name="area" value="default" />
+	  </form>
+	  
+	</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	
+          
+          
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">SAE3.02</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../source.html">source package</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+
+      </div>
+      &nbsp;
+    </nav>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      <nav class="wy-nav-top" id="barra-mobile" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">SAE 3.02 </a>
+      </nav>
+
+      <div class="wy-nav-content">
+	<div class="fundo-claro">
+	</div>
+	<div class="fundo-escuro">
+	</div>
+
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+	    
+	    <!-- <ul class="wy-breadcrumbs"> -->
+	    <!--   <li><a href="#">Docs</a> &raquo;</li> -->
+
+	    <!--   <li>Features</li> -->
+	    <!--   <li class="wy-breadcrumbs-aside"> -->
+
+	    <!-- 	<a href="_sources/index.txt" rel="nofollow"> View page source</a> -->
+
+	    <!--   </li> -->
+	    <!-- </ul> -->
+	    <!-- <hr/> -->
+	  </div>
+          <div role="main" class="">
+
+	    <div id="content" class="hfeed entry-container hentry">
+      	<div id="dark-mode-toggle-container">
+	  <dark-mode-toggle appearance="toggle" dark="switch to light mode" light="switch to dark mode">
+	  </dark-mode-toggle>
+	</div>
+  <h1>Source code for source.server</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">bcrypt</span>
+<span class="kn">import</span> <span class="nn">mysql.connector</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s1">&#39;0.0.0.0&#39;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">12345</span>
+<span class="n">BUFFER_SIZE</span> <span class="o">=</span> <span class="mi">4096</span>
+
+<span class="n">DB_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;toto&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;database&quot;</span><span class="p">:</span> <span class="s2">&quot;sae302&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">TABLES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        CREATE TABLE IF NOT EXISTS users (</span>
+<span class="s2">            id INT AUTO_INCREMENT PRIMARY KEY,</span>
+<span class="s2">            username VARCHAR(50) UNIQUE NOT NULL,</span>
+<span class="s2">            password_hash VARCHAR(100) NOT NULL,</span>
+<span class="s2">            ip_address VARCHAR(15),</span>
+<span class="s2">            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="s2">        )</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        CREATE TABLE IF NOT EXISTS messages (</span>
+<span class="s2">            id INT AUTO_INCREMENT PRIMARY KEY,</span>
+<span class="s2">            sender_username VARCHAR(50) NOT NULL,</span>
+<span class="s2">            content TEXT NOT NULL,</span>
+<span class="s2">            sender_ip VARCHAR(15) NOT NULL,</span>
+<span class="s2">            sended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">            FOREIGN KEY (sender_username) REFERENCES users(username)</span>
+<span class="s2">        )</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;private_messages&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        CREATE TABLE IF NOT EXISTS private_messages (</span>
+<span class="s2">            id INT AUTO_INCREMENT PRIMARY KEY,</span>
+<span class="s2">            sender_username VARCHAR(50) NOT NULL,</span>
+<span class="s2">            receiver_username VARCHAR(50) NOT NULL,</span>
+<span class="s2">            content TEXT NOT NULL,</span>
+<span class="s2">            sender_ip VARCHAR(15) NOT NULL,</span>
+<span class="s2">            sended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">            FOREIGN KEY (sender_username) REFERENCES users(username),</span>
+<span class="s2">            FOREIGN KEY (receiver_username) REFERENCES users(username)</span>
+<span class="s2">        )</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kicked_users&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">           CREATE TABLE IF NOT EXISTS kicked_users (</span>
+<span class="s2">               username VARCHAR(50) NOT NULL,</span>
+<span class="s2">               ip_address VARCHAR(15) NOT NULL,</span>
+<span class="s2">               kicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">               release_time TIMESTAMP NOT NULL,</span>
+<span class="s2">               FOREIGN KEY (username) REFERENCES users(username)</span>
+<span class="s2">           )</span>
+<span class="s2">       &quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;banned_users&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">           CREATE TABLE IF NOT EXISTS banned_users (</span>
+<span class="s2">               username VARCHAR(50) NOT NULL,</span>
+<span class="s2">               ip_address VARCHAR(15) NOT NULL,</span>
+<span class="s2">               banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,</span>
+<span class="s2">               FOREIGN KEY (username) REFERENCES users(username)</span>
+<span class="s2">           )</span>
+<span class="s2">       &quot;&quot;&quot;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="handle_client">
+<a class="viewcode-back" href="../../source.html#source.server.handle_client">[docs]</a>
+<span class="k">def</span> <span class="nf">handle_client</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handles communication with a connected client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client_socket (socket.socket): The client&#39;s socket.</span>
+<span class="sd">        addr (tuple): The client&#39;s address.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accepted connection from </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Send a welcome message to the client</span>
+        <span class="n">welcome_message</span> <span class="o">=</span> <span class="s2">&quot;login_signup&quot;</span>
+        <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="n">welcome_message</span><span class="p">)</span>
+
+        <span class="c1"># Wait for the client&#39;s choice</span>
+        <span class="n">choice</span> <span class="o">=</span> <span class="n">receive_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="n">username</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;login&quot;</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">handle_login</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;signup&quot;</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">handle_signup</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Invalid choice, close the connection or handle accordingly</span>
+            <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Closing connection.&quot;</span><span class="p">)</span>
+            <span class="n">client_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">username</span><span class="p">:</span>
+                <span class="c1"># Check if the user is in the kicked or banned list</span>
+                <span class="k">if</span> <span class="n">is_user_kicked</span><span class="p">(</span><span class="n">username</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_user_banned</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2"> is kicked. Closing connection.&quot;</span><span class="p">)</span>
+                    <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="s2">&quot;You are currently kicked.&quot;</span><span class="p">)</span>
+                    <span class="n">client_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="k">return</span>
+                <span class="k">elif</span> <span class="n">is_user_banned</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2"> is banned. Closing connection.&quot;</span><span class="p">)</span>
+                    <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="s2">&quot;You are currently banned.&quot;</span><span class="p">)</span>
+                    <span class="n">client_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="k">return</span>
+
+                <span class="c1"># Create an event for the client</span>
+                <span class="n">client_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+                    <span class="n">connected_clients</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;socket&quot;</span><span class="p">:</span> <span class="n">client_socket</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="n">client_event</span><span class="p">})</span>
+                    <span class="n">client_events</span><span class="p">[</span><span class="n">username</span><span class="p">]</span> <span class="o">=</span> <span class="n">client_event</span>
+
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">receive_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                        <span class="k">break</span>
+
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received from </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                    <span class="c1"># Process private messages</span>
+                    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/pm&quot;</span><span class="p">):</span>
+                        <span class="n">_</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">pm_content</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">send_private_message</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">pm_content</span><span class="p">)</span>
+                        <span class="n">store_private_message</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">pm_content</span><span class="p">,</span> <span class="n">addr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Check if the message is a public message and not sent by the same user</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+                            <span class="c1"># Broadcast the message to all connected clients (excluding the sender)</span>
+                            <span class="n">broadcast_message</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                            <span class="c1"># Store the message in the database (public message)</span>
+                            <span class="n">store_message</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">addr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error handling connection from </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Remove the client socket from the list</span>
+        <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+            <span class="n">connected_clients</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">connected_clients</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;socket&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">client_socket</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">username</span> <span class="ow">in</span> <span class="n">client_events</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">client_events</span><span class="p">[</span><span class="n">username</span><span class="p">]</span>
+        <span class="c1"># Close the connection</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection from </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> closed.&quot;</span><span class="p">)</span>
+        <span class="n">client_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="is_user_kicked">
+<a class="viewcode-back" href="../../source.html#source.server.is_user_kicked">[docs]</a>
+<span class="k">def</span> <span class="nf">is_user_kicked</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a user is currently kicked from the server.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username to check.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the user is kicked, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SELECT username FROM kicked_users WHERE username = </span><span class="si">%s</span><span class="s2"> AND release_time &gt; NOW()</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="is_user_banned">
+<a class="viewcode-back" href="../../source.html#source.server.is_user_banned">[docs]</a>
+<span class="k">def</span> <span class="nf">is_user_banned</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a user is currently banned from the server.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username to check.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the user is banned, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SELECT username FROM banned_users WHERE username = </span><span class="si">%s</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="handle_login">
+<a class="viewcode-back" href="../../source.html#source.server.handle_login">[docs]</a>
+<span class="k">def</span> <span class="nf">handle_login</span><span class="p">(</span><span class="n">client_socket</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle the login process for a client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client_socket (socket.socket): The client&#39;s socket.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str or None: The username if login is successful, None otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">addr</span> <span class="o">=</span> <span class="n">client_socket</span><span class="o">.</span><span class="n">getpeername</span><span class="p">()</span>
+    <span class="c1"># User Authentication</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">receive_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">receive_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">authenticate_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Authentication successful for </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;LOGIN_SUCCESS&quot;</span><span class="p">)</span>
+        <span class="n">update_user_ip</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">addr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># Update user&#39;s IP address</span>
+        <span class="k">return</span> <span class="n">username</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Authentication failed for </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;LOGIN_FAILURE&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="authenticate_user">
+<a class="viewcode-back" href="../../source.html#source.server.authenticate_user">[docs]</a>
+<span class="k">def</span> <span class="nf">authenticate_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Authenticate a user with the provided username and password.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username to authenticate.</span>
+<span class="sd">        password (str): The password to check.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if authentication is successful, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT username, password_hash FROM users WHERE username = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,))</span>
+    <span class="n">user_data</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">user_data</span> <span class="ow">and</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">checkpw</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">user_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="handle_signup">
+<a class="viewcode-back" href="../../source.html#source.server.handle_signup">[docs]</a>
+<span class="k">def</span> <span class="nf">handle_signup</span><span class="p">(</span><span class="n">client_socket</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle the user registration process for a client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client_socket (socket.socket): The client&#39;s socket.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str or None: The username if registration is successful, None otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">addr</span> <span class="o">=</span> <span class="n">client_socket</span><span class="o">.</span><span class="n">getpeername</span><span class="p">()</span>
+    <span class="c1"># User registration</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">receive_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">receive_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">register_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">addr</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>  <span class="c1"># Pass the IP address to the function</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registration successful for </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;SIGNUP_SUCCESS&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">username</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registration failed for </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">send_message</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;SIGNUP_FAILURE&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="register_user">
+<a class="viewcode-back" href="../../source.html#source.server.register_user">[docs]</a>
+<span class="k">def</span> <span class="nf">register_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a new user with the provided username, password, and IP address.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username for the new user.</span>
+<span class="sd">        password (str): The password for the new user.</span>
+<span class="sd">        ip_address (str): The IP address of the new user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if registration is successful, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Hash the password before storing it</span>
+    <span class="n">hashed_password</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">hashpw</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">gensalt</span><span class="p">())</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            INSERT INTO users (username, password_hash, ip_address)</span>
+<span class="s2">            VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">))</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error registering user: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="admin_console">
+<a class="viewcode-back" href="../../source.html#source.server.admin_console">[docs]</a>
+<span class="k">def</span> <span class="nf">admin_console</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the admin console, allowing the administrator to input commands.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">admin_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Admin console: &quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">admin_input</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ADMIN_COMMAND_PREFIX</span><span class="p">):</span>
+            <span class="n">process_admin_command</span><span class="p">(</span><span class="n">admin_input</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ADMIN_COMMAND_PREFIX</span><span class="p">):])</span></div>
+
+
+<div class="viewcode-block" id="process_admin_command">
+<a class="viewcode-back" href="../../source.html#source.server.process_admin_command">[docs]</a>
+<span class="k">def</span> <span class="nf">process_admin_command</span><span class="p">(</span><span class="n">admin_command</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process an admin command received from the admin console.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        admin_command (str): The admin command to process.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/kick&quot;</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">target_user</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">kick_user</span><span class="p">(</span><span class="n">target_user</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/ban&quot;</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">target_user</span> <span class="o">=</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">ban_user</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/unban&quot;</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">target_user</span> <span class="o">=</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">unban_user</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">admin_command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/kill&quot;</span><span class="p">):</span>
+        <span class="n">kill_server</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid admin command&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="kick_user">
+<a class="viewcode-back" href="../../source.html#source.server.kick_user">[docs]</a>
+<span class="k">def</span> <span class="nf">kick_user</span><span class="p">(</span><span class="n">target_user</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kick a user from the server for a specified duration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_user (str): The username of the user to be kicked.</span>
+<span class="sd">        duration (str): The duration of the kick in seconds.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_ip</span> <span class="o">=</span> <span class="n">get_user_ip</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">user_ip</span><span class="p">:</span>
+        <span class="n">kick_duration</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">release_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">kick_duration</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;target_user: </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2">, user_ip: </span><span class="si">{</span><span class="n">user_ip</span><span class="si">}</span><span class="s2">, release_time: </span><span class="si">{</span><span class="n">release_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            INSERT INTO kicked_users (username, ip_address, release_time)</span>
+<span class="s2">            VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">target_user</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_ip</span><span class="p">),</span> <span class="n">release_time</span><span class="p">))</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You have been kicked from the server for </span><span class="si">{</span><span class="n">duration</span><span class="si">}</span><span class="s2"> seconds. You can rejoin after </span><span class="si">{</span><span class="n">release_time</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">send_private_message</span><span class="p">(</span><span class="s2">&quot;Admin&quot;</span><span class="p">,</span> <span class="n">target_user</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+        <span class="n">close_user_socket</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2"> kicked for </span><span class="si">{</span><span class="n">duration</span><span class="si">}</span><span class="s2"> seconds. They can rejoin after </span><span class="si">{</span><span class="n">release_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: User </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_user_ip">
+<a class="viewcode-back" href="../../source.html#source.server.get_user_ip">[docs]</a>
+<span class="k">def</span> <span class="nf">get_user_ip</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the IP address associated with a given username.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username for which to retrieve the IP address.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str or None: The IP address of the user, or None if not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT ip_address FROM users WHERE username = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,))</span>
+    <span class="n">ip_address</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ip_address</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ip_address</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="update_user_ip">
+<a class="viewcode-back" href="../../source.html#source.server.update_user_ip">[docs]</a>
+<span class="k">def</span> <span class="nf">update_user_ip</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update the IP address associated with a given username.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username for which to update the IP address.</span>
+<span class="sd">        ip_address (str): The new IP address.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            UPDATE users SET ip_address = </span><span class="si">%s</span><span class="s2"> WHERE username = </span><span class="si">%s</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">ip_address</span><span class="p">,</span> <span class="n">username</span><span class="p">))</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;s IP address updated to </span><span class="si">{</span><span class="n">ip_address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error updating user&#39;s IP address: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ban_user">
+<a class="viewcode-back" href="../../source.html#source.server.ban_user">[docs]</a>
+<span class="k">def</span> <span class="nf">ban_user</span><span class="p">(</span><span class="n">target_user</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ban a user from the server indefinitely.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_user (str): The username of the user to be banned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_ip</span> <span class="o">=</span> <span class="n">get_user_ip</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+    <span class="n">user_socket</span> <span class="o">=</span> <span class="n">get_user_socket</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        INSERT INTO banned_users (username, ip_address)</span>
+<span class="s2">        VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">target_user</span><span class="p">,</span> <span class="n">user_ip</span><span class="p">))</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;You have been banned from the server indefinitely.&quot;</span>
+    <span class="n">send_private_message</span><span class="p">(</span><span class="s2">&quot;Admin&quot;</span><span class="p">,</span> <span class="n">target_user</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+    <span class="n">close_user_socket</span><span class="p">(</span><span class="n">target_user</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2"> banned indefinitely&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unban_user">
+<a class="viewcode-back" href="../../source.html#source.server.unban_user">[docs]</a>
+<span class="k">def</span> <span class="nf">unban_user</span><span class="p">(</span><span class="n">target_user</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unban a user from the server.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_user (str): The username of the user to be unbanned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove the user&#39;s record from the banned_users table</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM banned_users WHERE username = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">target_user</span><span class="p">,))</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="c1"># Send a message to inform about the unban</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You have been unbanned. You can now reconnect to the server.&quot;</span>
+    <span class="n">send_private_message</span><span class="p">(</span><span class="s2">&quot;Admin&quot;</span><span class="p">,</span> <span class="n">target_user</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2"> unbanned&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1"># Helper function to close a user&#39;s socket</span>
+<div class="viewcode-block" id="close_user_socket">
+<a class="viewcode-back" href="../../source.html#source.server.close_user_socket">[docs]</a>
+<span class="k">def</span> <span class="nf">close_user_socket</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Close the socket connection for a kicked or banned user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username of the user whose socket to close.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_socket</span> <span class="o">=</span> <span class="n">get_user_socket</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user_socket</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error closing connection for kicked/banned user </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_user_socket">
+<a class="viewcode-back" href="../../source.html#source.server.get_user_socket">[docs]</a>
+<span class="k">def</span> <span class="nf">get_user_socket</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the socket associated with a given username.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        username (str): The username for which to retrieve the socket.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        socket.socket or None: The socket of the user, or None if not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">connected_clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">username</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;socket&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="kill_server">
+<a class="viewcode-back" href="../../source.html#source.server.kill_server">[docs]</a>
+<span class="k">def</span> <span class="nf">kill_server</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initiate a server shutdown process.</span>
+
+<span class="sd">    Sends a broadcast message to all clients, announces the server shutdown,</span>
+<span class="sd">    and schedules the actual server shutdown after a 10-second delay.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">broadcast_message</span><span class="p">(</span><span class="s2">&quot;Admin&quot;</span><span class="p">,</span> <span class="s2">&quot;The server will shut down in 10 seconds. Save your work!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Server will shut down in 10 seconds. Save your work!&quot;</span><span class="p">)</span>
+
+    <span class="n">timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">shutdown_server</span><span class="p">)</span>
+    <span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="shutdown_server">
+<a class="viewcode-back" href="../../source.html#source.server.shutdown_server">[docs]</a>
+<span class="k">def</span> <span class="nf">shutdown_server</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform the actual shutdown of the server.</span>
+
+<span class="sd">    Closes the server socket, disconnects from the database, and exits the application.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Server shut down.&quot;</span><span class="p">)</span>
+    <span class="n">server_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">close_database_connection</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="send_message">
+<a class="viewcode-back" href="../../source.html#source.server.send_message">[docs]</a>
+<span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send a message to a specified socket.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sock (socket.socket): The socket to which the message will be sent.</span>
+<span class="sd">        message (str): The message to send.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">message_bytes</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">message</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message_bytes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="receive_message">
+<a class="viewcode-back" href="../../source.html#source.server.receive_message">[docs]</a>
+<span class="k">def</span> <span class="nf">receive_message</span><span class="p">(</span><span class="n">sock</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Receive a message from a specified socket.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sock (socket.socket): The socket from which to receive the message.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bytes: The received message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="broadcast_message">
+<a class="viewcode-back" href="../../source.html#source.server.broadcast_message">[docs]</a>
+<span class="k">def</span> <span class="nf">broadcast_message</span><span class="p">(</span><span class="n">sender_username</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Broadcast a message to all connected clients.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sender_username (str): The username of the sender.</span>
+<span class="sd">        message (str): The message to broadcast.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">connected_clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sender_username</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">send_message</span><span class="p">(</span><span class="n">client</span><span class="p">[</span><span class="s2">&quot;socket&quot;</span><span class="p">],</span> <span class="n">message</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error broadcasting to a client: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">username</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">client_events</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">username</span> <span class="o">!=</span> <span class="n">sender_username</span><span class="p">:</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="store_message">
+<a class="viewcode-back" href="../../source.html#source.server.store_message">[docs]</a>
+<span class="k">def</span> <span class="nf">store_message</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">sender_ip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store a public message in the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sender (str): The username of the message sender.</span>
+<span class="sd">        content (str): The content of the message.</span>
+<span class="sd">        sender_ip (str): The IP address of the message sender.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                INSERT INTO messages (sender_username, content, sender_ip)</span>
+<span class="s2">                VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">sender_ip</span><span class="p">))</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="store_private_message">
+<a class="viewcode-back" href="../../source.html#source.server.store_private_message">[docs]</a>
+<span class="k">def</span> <span class="nf">store_private_message</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">sender_ip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store a private message in the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sender (str): The username of the message sender.</span>
+<span class="sd">        receiver (str): The username of the message receiver.</span>
+<span class="sd">        content (str): The content of the message.</span>
+<span class="sd">        sender_ip (str): The IP address of the message sender.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                INSERT INTO private_messages (sender_username, receiver_username, content, sender_ip)</span>
+<span class="s2">                VALUES (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">sender_ip</span><span class="p">))</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="send_private_message">
+<a class="viewcode-back" href="../../source.html#source.server.send_private_message">[docs]</a>
+<span class="k">def</span> <span class="nf">send_private_message</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send a private message to a specific user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sender (str): The username of the message sender.</span>
+<span class="sd">        receiver (str): The username of the message receiver.</span>
+<span class="sd">        content (str): The content of the private message.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">receiver_socket</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">connected_clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">receiver</span><span class="p">:</span>
+                <span class="n">receiver_socket</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;socket&quot;</span><span class="p">]</span>
+                <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">receiver_socket</span><span class="p">:</span>
+        <span class="n">pm_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;DM from </span><span class="si">{</span><span class="n">sender</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">send_message</span><span class="p">(</span><span class="n">receiver_socket</span><span class="p">,</span> <span class="n">pm_message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="close_database_connection">
+<a class="viewcode-back" href="../../source.html#source.server.close_database_connection">[docs]</a>
+<span class="k">def</span> <span class="nf">close_database_connection</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Close the connection to the database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+        <span class="c1"># Initialize database connection and create tables</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="n">DB_CONFIG</span><span class="p">)</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">table_query</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table_query</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    
+    <span class="c1"># Initialize server socket</span>
+    <span class="n">server_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">server_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to bind: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    
+    <span class="n">server_socket</span><span class="o">.</span><span class="n">listen</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Server listening on </span><span class="si">{</span><span class="n">HOST</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">PORT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Global variables</span>
+    <span class="n">connected_clients</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">client_events</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    
+    <span class="n">ADMIN_COMMAND_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    
+    <span class="n">admin_console_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">admin_console</span><span class="p">)</span>
+    <span class="n">admin_console_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">client_socket</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">server_socket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="n">client_handler</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">handle_client</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client_socket</span><span class="p">,</span> <span class="n">addr</span><span class="p">))</span>
+        <span class="n">client_handler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+	    </div>
+            <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2023, Justin Chaleard.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/jucacrispim/sphinx_pdj_theme">theme</a> provided by <a href="https://poraodojuca.dev">Porão do Juca</a>.
+
+</footer>
+	</div>
+	</div>
+	  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js">
+
+    </script>
+    <script type="text/javascript" src="../../_static/doctools.js">
+
+    </script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js">
+
+    </script>
+
+  
+
+   <script type="text/javascript"
+           src="../../_static/js/theme.js"></script>
+
+   <script type="text/javascript"
+           src="../../_static/js/pdj.js"></script>
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+  </body>
+</html>

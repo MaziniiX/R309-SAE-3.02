@@ -1,0 +1,783 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="" lang="" version="-//W3C//DTD XHTML 1.1//EN" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="">
+    <link rel="icon" type="image/x-icon" href="">
+
+  
+  <title>source package &mdash; SAE 3.02 1.0.0 documentation</title>
+  
+
+  
+
+  
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'/>
+
+
+  <link rel="stylesheet" href="_static/css/img.css" type="text/css"/>
+  
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="_static/css/pdj.css" type="text/css" />
+  
+
+  
+
+  <link rel="stylesheet" href="_static/css/darker.css" type="text/css" media="(prefers-color-scheme: dark)"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SAE 3.02 1.0.0 documentation" href="index.html"/>
+        <link rel="up" title="SAE3.02" href="modules.html"/>
+        <link rel="prev" title="SAE3.02" href="modules.html"/>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="cache-control" content="public" />
+    <meta name="robots" content="follow, all" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Add jQuery library -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <script type="module" src="https://googlechromelabs.github.io/dark-mode-toggle/src/dark-mode-toggle.mjs"></script>
+
+  </head>
+
+  <body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+	
+        <a href="index.html" class="fa fa-home"> SAE 3.02 </a>
+	
+	
+        <div role="search">
+	  
+	  <form id ="rtd-search-form" class="wy-form"
+		action="search.html" method="get">
+	    <input type="text" name="q" placeholder="Search docs" />
+	    <input type="hidden" name="check_keywords" value="yes" />
+	    <input type="hidden" name="area" value="default" />
+	  </form>
+	  
+	</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	
+          
+          
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">SAE3.02</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">source package</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+
+      </div>
+      &nbsp;
+    </nav>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      <nav class="wy-nav-top" id="barra-mobile" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">SAE 3.02 </a>
+      </nav>
+
+      <div class="wy-nav-content">
+	<div class="fundo-claro">
+	</div>
+	<div class="fundo-escuro">
+	</div>
+
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+	    
+	    <!-- <ul class="wy-breadcrumbs"> -->
+	    <!--   <li><a href="#">Docs</a> &raquo;</li> -->
+
+	    <!--   <li>Features</li> -->
+	    <!--   <li class="wy-breadcrumbs-aside"> -->
+
+	    <!-- 	<a href="_sources/index.txt" rel="nofollow"> View page source</a> -->
+
+	    <!--   </li> -->
+	    <!-- </ul> -->
+	    <!-- <hr/> -->
+	  </div>
+          <div role="main" class="">
+
+	    <div id="content" class="hfeed entry-container hentry">
+      	<div id="dark-mode-toggle-container">
+	  <dark-mode-toggle appearance="toggle" dark="switch to light mode" light="switch to dark mode">
+	  </dark-mode-toggle>
+	</div>
+  <section id="source-package">
+<h1>source package<a class="headerlink" href="#source-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-source.client">
+<span id="source-client-module"></span><h2>source.client module<a class="headerlink" href="#module-source.client" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="source.client.listen_for_messages">
+<span class="sig-prename descclassname"><span class="pre">source.client.</span></span><span class="sig-name descname"><span class="pre">listen_for_messages</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/client.html#listen_for_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.client.listen_for_messages" title="Link to this definition">¶</a></dt>
+<dd><p>Start a thread to continuously listen for messages from the server.</p>
+<p>Returns:
+None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.client.receive_message">
+<span class="sig-prename descclassname"><span class="pre">source.client.</span></span><span class="sig-name descname"><span class="pre">receive_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/client.html#receive_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.client.receive_message" title="Link to this definition">¶</a></dt>
+<dd><p>Receive a message from the provided socket.</p>
+<p>Parameters:
+- sock (socket): The socket from which the message will be received.</p>
+<p>Returns:
+bytes: The received message in bytes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.client.send_message">
+<span class="sig-prename descclassname"><span class="pre">source.client.</span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/client.html#send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.client.send_message" title="Link to this definition">¶</a></dt>
+<dd><p>Send a message through the provided socket.</p>
+<p>Parameters:
+- sock (socket): The socket through which the message will be sent.
+- message (str or bytes): The message to be sent. If a string, it will be encoded to bytes.</p>
+<p>Returns:
+None</p>
+</dd></dl>
+
+</section>
+<section id="module-source.guiclient">
+<span id="source-guiclient-module"></span><h2>source.guiclient module<a class="headerlink" href="#module-source.guiclient" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="source.guiclient.ChatApp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">source.guiclient.</span></span><span class="sig-name descname"><span class="pre">ChatApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chat_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatApp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatApp" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
+<p>Main application window for the chat application.</p>
+<p>Methods:
+- <cite>__init__(self, username, chat_client)</cite>: Initializes the ChatApp.
+- <cite>init_ui(self)</cite>: Initializes the user interface.
+- <cite>open_private_chat(self, item)</cite>: Opens a private chat window.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.ChatApp.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatApp.init_ui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatApp.init_ui" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the user interface of the ChatApp.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.ChatApp.open_private_chat">
+<span class="sig-name descname"><span class="pre">open_private_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatApp.open_private_chat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatApp.open_private_chat" title="Link to this definition">¶</a></dt>
+<dd><p>Opens a private chat window.</p>
+<p>Parameters:
+- <cite>item</cite>: The item clicked in the user list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">source.guiclient.</span></span><span class="sig-name descname"><span class="pre">ChatWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_list_widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages_widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private_messages_widget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatWidget" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget for displaying and interacting with the public chat.</p>
+<p>Attributes:
+- <cite>message_received</cite>: Signal emitted when a message is received.
+- <cite>message_sent</cite>: Signal emitted when a message is sent.</p>
+<p>Methods:
+- <cite>__init__(self, username, users_list_widget, messages_widget, private_messages_widget)</cite>: Initializes the ChatWidget.
+- <cite>init_ui(self)</cite>: Initializes the user interface.
+- <cite>send_message(self)</cite>: Sends a public message.
+- <cite>display_message(self, sender, content)</cite>: Displays a public message.
+- <cite>display_private_message(self, sender, content)</cite>: Displays a private message.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget.display_message">
+<span class="sig-name descname"><span class="pre">display_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatWidget.display_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatWidget.display_message" title="Link to this definition">¶</a></dt>
+<dd><p>Displays a public message.</p>
+<p>Parameters:
+- <cite>sender</cite>: The sender of the message.
+- <cite>content</cite>: The content of the message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget.display_private_message">
+<span class="sig-name descname"><span class="pre">display_private_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatWidget.display_private_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatWidget.display_private_message" title="Link to this definition">¶</a></dt>
+<dd><p>Displays a private message.</p>
+<p>Parameters:
+- <cite>sender</cite>: The sender of the private message.
+- <cite>content</cite>: The content of the private message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatWidget.init_ui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatWidget.init_ui" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the user interface of the ChatWidget.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget.message_received">
+<span class="sig-name descname"><span class="pre">message_received</span></span><a class="headerlink" href="#source.guiclient.ChatWidget.message_received" title="Link to this definition">¶</a></dt>
+<dd><p>pyqtSignal(<a href="#id1"><span class="problematic" id="id2">*</span></a>types, name: str = …, revision: int = …, arguments: Sequence = …) -&gt; PYQT_SIGNAL</p>
+<p>types is normally a sequence of individual types.  Each type is either a
+type object or a string that is the name of a C++ type.  Alternatively
+each type could itself be a sequence of types each describing a different
+overloaded signal.
+name is the optional C++ name of the signal.  If it is not specified then
+the name of the class attribute that is bound to the signal is used.
+revision is the optional revision of the signal that is exported to QML.
+If it is not specified then 0 is used.
+arguments is the optional sequence of the names of the signal’s arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget.message_sent">
+<span class="sig-name descname"><span class="pre">message_sent</span></span><a class="headerlink" href="#source.guiclient.ChatWidget.message_sent" title="Link to this definition">¶</a></dt>
+<dd><p>pyqtSignal(<a href="#id3"><span class="problematic" id="id4">*</span></a>types, name: str = …, revision: int = …, arguments: Sequence = …) -&gt; PYQT_SIGNAL</p>
+<p>types is normally a sequence of individual types.  Each type is either a
+type object or a string that is the name of a C++ type.  Alternatively
+each type could itself be a sequence of types each describing a different
+overloaded signal.
+name is the optional C++ name of the signal.  If it is not specified then
+the name of the class attribute that is bound to the signal is used.
+revision is the optional revision of the signal that is exported to QML.
+If it is not specified then 0 is used.
+arguments is the optional sequence of the names of the signal’s arguments.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.ChatWidget.send_message">
+<span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#ChatWidget.send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.ChatWidget.send_message" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a public message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">source.guiclient.</span></span><span class="sig-name descname"><span class="pre">LoginSignupPage</span></span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
+<p>Login and signup page for the chat client.</p>
+<p>Methods:
+- <cite>__init__(self)</cite>: Initializes the LoginSignupPage.
+- <cite>login_clicked(self)</cite>: Handles the login button click event.
+- <cite>signup_clicked(self)</cite>: Handles the signup button click event.
+- <cite>get_input_values(self)</cite>: Retrieves input values from the UI.
+- <cite>send_login_request(self, username, password)</cite>: Sends a login request to the server.
+- <cite>send_signup_request(self, username, password)</cite>: Sends a signup request to the server.
+- <cite>open_chat_app(self)</cite>: Opens the main chat application window.
+- <cite>show_connection_error(self, error)</cite>: Displays a connection error message.
+- <cite>show_unexpected_response_error(self)</cite>: Displays an unexpected server response error message.
+- <cite>open_success_window(self, message)</cite>: Displays a success message.
+- <cite>open_error_window(self, title, message)</cite>: Displays an error message.
+- <cite>send_message(self, message)</cite>: Sends a message to the server.
+- <cite>receive_message(self)</cite>: Receives a message from the server.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.get_input_values">
+<span class="sig-name descname"><span class="pre">get_input_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.get_input_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.get_input_values" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves input values from the UI.</p>
+<p>Returns:
+- Tuple containing host, port, username, and password.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.login_clicked">
+<span class="sig-name descname"><span class="pre">login_clicked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.login_clicked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.login_clicked" title="Link to this definition">¶</a></dt>
+<dd><p>Handles the login button click event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.open_chat_app">
+<span class="sig-name descname"><span class="pre">open_chat_app</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.open_chat_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.open_chat_app" title="Link to this definition">¶</a></dt>
+<dd><p>Opens the main chat application window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.open_error_window">
+<span class="sig-name descname"><span class="pre">open_error_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.open_error_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.open_error_window" title="Link to this definition">¶</a></dt>
+<dd><p>Displays an error message.</p>
+<p>Parameters:
+- <cite>title</cite>: The title of the error window.
+- <cite>message</cite>: The error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.open_success_window">
+<span class="sig-name descname"><span class="pre">open_success_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.open_success_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.open_success_window" title="Link to this definition">¶</a></dt>
+<dd><p>Displays a success message.</p>
+<p>Parameters:
+- <cite>message</cite>: The success message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.receive_message">
+<span class="sig-name descname"><span class="pre">receive_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.receive_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.receive_message" title="Link to this definition">¶</a></dt>
+<dd><p>Receives a message from the server.</p>
+<p>Returns:
+- The received message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.send_login_request">
+<span class="sig-name descname"><span class="pre">send_login_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.send_login_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.send_login_request" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a login request to the server.</p>
+<p>Parameters:
+- <cite>username</cite>: The username for login.
+- <cite>password</cite>: The password for login.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.send_message">
+<span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.send_message" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a message to the server.</p>
+<p>Parameters:
+- <cite>message</cite>: The message to be sent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.send_signup_request">
+<span class="sig-name descname"><span class="pre">send_signup_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.send_signup_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.send_signup_request" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a signup request to the server.</p>
+<p>Parameters:
+- <cite>username</cite>: The username for signup.
+- <cite>password</cite>: The password for signup.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.show_connection_error">
+<span class="sig-name descname"><span class="pre">show_connection_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.show_connection_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.show_connection_error" title="Link to this definition">¶</a></dt>
+<dd><p>Displays a connection error message.</p>
+<p>Parameters:
+- <cite>error</cite>: The error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.show_unexpected_response_error">
+<span class="sig-name descname"><span class="pre">show_unexpected_response_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.show_unexpected_response_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.show_unexpected_response_error" title="Link to this definition">¶</a></dt>
+<dd><p>Displays an unexpected server response error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.LoginSignupPage.signup_clicked">
+<span class="sig-name descname"><span class="pre">signup_clicked</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#LoginSignupPage.signup_clicked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.LoginSignupPage.signup_clicked" title="Link to this definition">¶</a></dt>
+<dd><p>Handles the signup button click event.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="source.guiclient.PrivateChatWindow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">source.guiclient.</span></span><span class="sig-name descname"><span class="pre">PrivateChatWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#PrivateChatWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.PrivateChatWindow" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget for displaying and interacting with private messages.</p>
+<p>Methods:
+- <cite>__init__(self, username, target_user)</cite>: Initializes the PrivateChatWindow.
+- <cite>init_ui(self)</cite>: Initializes the user interface.
+- <cite>send_private_message(self)</cite>: Sends a private message.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.PrivateChatWindow.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#PrivateChatWindow.init_ui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.PrivateChatWindow.init_ui" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the user interface of the PrivateChatWindow.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="source.guiclient.PrivateChatWindow.send_private_message">
+<span class="sig-name descname"><span class="pre">send_private_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/guiclient.html#PrivateChatWindow.send_private_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.guiclient.PrivateChatWindow.send_private_message" title="Link to this definition">¶</a></dt>
+<dd><p>Sends a private message.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-source.server">
+<span id="source-server-module"></span><h2>source.server module<a class="headerlink" href="#module-source.server" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.admin_console">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">admin_console</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#admin_console"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.admin_console" title="Link to this definition">¶</a></dt>
+<dd><p>Run the admin console, allowing the administrator to input commands.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.authenticate_user">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">authenticate_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#authenticate_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.authenticate_user" title="Link to this definition">¶</a></dt>
+<dd><p>Authenticate a user with the provided username and password.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username to authenticate.
+password (str): The password to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if authentication is successful, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.ban_user">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">ban_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#ban_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.ban_user" title="Link to this definition">¶</a></dt>
+<dd><p>Ban a user from the server indefinitely.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>target_user (str): The username of the user to be banned.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.broadcast_message">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">broadcast_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#broadcast_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.broadcast_message" title="Link to this definition">¶</a></dt>
+<dd><p>Broadcast a message to all connected clients.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>sender_username (str): The username of the sender.
+message (str): The message to broadcast.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.close_database_connection">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">close_database_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#close_database_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.close_database_connection" title="Link to this definition">¶</a></dt>
+<dd><p>Close the connection to the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.close_user_socket">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">close_user_socket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#close_user_socket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.close_user_socket" title="Link to this definition">¶</a></dt>
+<dd><p>Close the socket connection for a kicked or banned user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username of the user whose socket to close.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.get_user_ip">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">get_user_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#get_user_ip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.get_user_ip" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the IP address associated with a given username.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username for which to retrieve the IP address.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str or None: The IP address of the user, or None if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.get_user_socket">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">get_user_socket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#get_user_socket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.get_user_socket" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the socket associated with a given username.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username for which to retrieve the socket.</p>
+</dd>
+<dt>Returns:</dt><dd><p>socket.socket or None: The socket of the user, or None if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.handle_client">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">handle_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_socket</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#handle_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.handle_client" title="Link to this definition">¶</a></dt>
+<dd><p>Handles communication with a connected client.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>client_socket (socket.socket): The client’s socket.
+addr (tuple): The client’s address.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.handle_login">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">handle_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_socket</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#handle_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.handle_login" title="Link to this definition">¶</a></dt>
+<dd><p>Handle the login process for a client.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>client_socket (socket.socket): The client’s socket.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str or None: The username if login is successful, None otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.handle_signup">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">handle_signup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_socket</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#handle_signup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.handle_signup" title="Link to this definition">¶</a></dt>
+<dd><p>Handle the user registration process for a client.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>client_socket (socket.socket): The client’s socket.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str or None: The username if registration is successful, None otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.is_user_banned">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">is_user_banned</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#is_user_banned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.is_user_banned" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a user is currently banned from the server.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the user is banned, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.is_user_kicked">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">is_user_kicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#is_user_kicked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.is_user_kicked" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a user is currently kicked from the server.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username to check.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the user is kicked, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.kick_user">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">kick_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#kick_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.kick_user" title="Link to this definition">¶</a></dt>
+<dd><p>Kick a user from the server for a specified duration.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>target_user (str): The username of the user to be kicked.
+duration (str): The duration of the kick in seconds.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.kill_server">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">kill_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#kill_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.kill_server" title="Link to this definition">¶</a></dt>
+<dd><p>Initiate a server shutdown process.</p>
+<p>Sends a broadcast message to all clients, announces the server shutdown,
+and schedules the actual server shutdown after a 10-second delay.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.process_admin_command">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">process_admin_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">admin_command</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#process_admin_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.process_admin_command" title="Link to this definition">¶</a></dt>
+<dd><p>Process an admin command received from the admin console.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>admin_command (str): The admin command to process.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.receive_message">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">receive_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#receive_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.receive_message" title="Link to this definition">¶</a></dt>
+<dd><p>Receive a message from a specified socket.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>sock (socket.socket): The socket from which to receive the message.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bytes: The received message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.register_user">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">register_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#register_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.register_user" title="Link to this definition">¶</a></dt>
+<dd><p>Register a new user with the provided username, password, and IP address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username for the new user.
+password (str): The password for the new user.
+ip_address (str): The IP address of the new user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if registration is successful, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.send_message">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.send_message" title="Link to this definition">¶</a></dt>
+<dd><p>Send a message to a specified socket.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>sock (socket.socket): The socket to which the message will be sent.
+message (str): The message to send.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.send_private_message">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">send_private_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receiver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#send_private_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.send_private_message" title="Link to this definition">¶</a></dt>
+<dd><p>Send a private message to a specific user.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>sender (str): The username of the message sender.
+receiver (str): The username of the message receiver.
+content (str): The content of the private message.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.shutdown_server">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">shutdown_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#shutdown_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.shutdown_server" title="Link to this definition">¶</a></dt>
+<dd><p>Perform the actual shutdown of the server.</p>
+<p>Closes the server socket, disconnects from the database, and exits the application.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.store_message">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">store_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender_ip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#store_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.store_message" title="Link to this definition">¶</a></dt>
+<dd><p>Store a public message in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>sender (str): The username of the message sender.
+content (str): The content of the message.
+sender_ip (str): The IP address of the message sender.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.store_private_message">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">store_private_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receiver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender_ip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#store_private_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.store_private_message" title="Link to this definition">¶</a></dt>
+<dd><p>Store a private message in the database.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>sender (str): The username of the message sender.
+receiver (str): The username of the message receiver.
+content (str): The content of the message.
+sender_ip (str): The IP address of the message sender.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.unban_user">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">unban_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#unban_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.unban_user" title="Link to this definition">¶</a></dt>
+<dd><p>Unban a user from the server.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>target_user (str): The username of the user to be unbanned.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="source.server.update_user_ip">
+<span class="sig-prename descclassname"><span class="pre">source.server.</span></span><span class="sig-name descname"><span class="pre">update_user_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ip_address</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/source/server.html#update_user_ip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#source.server.update_user_ip" title="Link to this definition">¶</a></dt>
+<dd><p>Update the IP address associated with a given username.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>username (str): The username for which to update the IP address.
+ip_address (str): The new IP address.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-source">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-source" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+	    </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="SAE3.02"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2023, Justin Chaleard.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/jucacrispim/sphinx_pdj_theme">theme</a> provided by <a href="https://poraodojuca.dev">Porão do Juca</a>.
+
+</footer>
+	</div>
+	</div>
+	  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+    <script type="text/javascript" src="_static/documentation_options.js">
+
+    </script>
+    <script type="text/javascript" src="_static/doctools.js">
+
+    </script>
+    <script type="text/javascript" src="_static/sphinx_highlight.js">
+
+    </script>
+
+  
+
+   <script type="text/javascript"
+           src="_static/js/theme.js"></script>
+
+   <script type="text/javascript"
+           src="_static/js/pdj.js"></script>
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+  </body>
+</html>
