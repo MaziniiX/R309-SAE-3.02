@@ -14,7 +14,6 @@ This is a simple client-server chat application developed using Python and PyQt6
 ### Prerequisites
 
 - Python 3.x
-- PyQt6
 - MySQL server
 
 ### Installation
@@ -22,8 +21,8 @@ This is a simple client-server chat application developed using Python and PyQt6
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/chat-application.git
-    cd chat-application
+    git clone https://github.com/MaziniiX/R309-SAE-3.02.git
+    cd .\SAE3.02\source\
     ```
 
 2. Install the required Python packages:
@@ -53,6 +52,10 @@ This is a simple client-server chat application developed using Python and PyQt6
 - Launch the client application and provide the host, port, username, and password.
 - Log in or sign up, and start chatting with others.
 - Admins can use the admin console to manage users and shut down the server.
+
+## Documentation
+
+Sphinx generated documentation can be found at .\SAE3.02\docs\_build\html\index.html
 
 ## Contributing
 
